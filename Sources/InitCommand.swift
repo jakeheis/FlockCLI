@@ -40,11 +40,12 @@ class InitCommand: CommandType {
         "import PackageDescription",
         "",
         "let package = Package(",
-        "  name: \"Flock\",",
+        "  name: \"Flockfile\",",
         "  dependencies: [",
         "    .Package(url: \"/Users/jakeheiser/Documents/Swift/Flock\", majorVersion: 0, minor: 0),",
         "  ]",
-        ")"
+        ")",
+        ""
       ].joinWithSeparator("\n")
     }
   
@@ -52,7 +53,8 @@ class InitCommand: CommandType {
       return [
       "import Flock",
       "",
-      "Flock.run()"
+      "Flock.run()",
+      ""
       ].joinWithSeparator("\n")
     }
   
