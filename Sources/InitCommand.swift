@@ -53,6 +53,8 @@ class InitCommand: CommandType {
       return [
       "import Flock",
       "",
+      "Flock.use(Flock.Default)",
+      "",
       "Flock.run()",
       ""
       ].joinWithSeparator("\n")
