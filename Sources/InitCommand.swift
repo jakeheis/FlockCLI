@@ -7,7 +7,7 @@ class InitCommand: CommandType {
     let commandSignature = ""
     let commandShortDescription = ""
     
-    func execute(argument: CommandArguments) throws {
+    func execute(arguments: CommandArguments) throws {
       let deployURL = NSURL(fileURLWithPath: "deploy", isDirectory: true)
       
       // Create deploy/flock
