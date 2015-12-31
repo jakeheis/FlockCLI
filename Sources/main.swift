@@ -7,5 +7,6 @@ Router.Config.fallbackToDefaultCommand = true
 CLI.defaultCommand = ForwardCommand()
 CLI.helpCommand = nil
 CLI.registerCommand(InitCommand())
+CLI.registerCommand(BuildCommand())
 
 CLI.go()
