@@ -8,40 +8,72 @@ class InitCommand: CommandType {
     let commandShortDescription = ""
     
     func execute(arguments: CommandArguments) throws {
-      let deployURL = NSURL(fileURLWithPath: "deploy", isDirectory: true)
+        let flockDirectory = "deploy/flock"
+        let packageFile = "deploy/flock/Package.swift"
+        
+        let flockfile = "Flockfile.swift"
+        let linkedFlockfile = "deploy/flock/main.swift"
+        
+        let productionFile = "deploy/production.swift"
+        let linkedProductionFile = "deploy/flock/production.swift"
+        let stagingFile = "deploy/staging.swift"
+        let linkedStagingFile = "deploy/flock/staging.swift"
       
-      // Create deploy/flock
-      let flockURL = deployURL.URLByAppendingPathComponent("flock")
-      guard !flockURL.checkResourceIsReachableAndReturnError(nil) else {
-        throw CLIError.Error("deploy/flock must not already exist")
-      } 
-      try NSFileManager().createDirectoryAtURL(flockURL, withIntermediateDirectories: true, attributes: nil)
-      
-      // Create deploy/flock/Package.swift
-      let packageURL = flockURL.URLByAppendingPathComponent("Package.swift")
-      try packageDefault().writeToURL(packageURL, atomically: true, encoding: NSUTF8StringEncoding)
-      
-      // Create Flockfile.swift
-      let flockfileURL = NSURL(fileURLWithPath: "Flockfile.swift", isDirectory: true)
-      guard !flockfileURL.checkResourceIsReachableAndReturnError(nil) else {
-        throw CLIError.Error("Flockfile.swift must not already exist")
-      } 
-      try flockfileDefault().writeToURL(flockfileURL, atomically: true, encoding: NSUTF8StringEncoding)
-      
-      // Symlink Flockfile.swift to deploy/flock/main.swift
-      let mainFlockURL = flockURL.URLByAppendingPathComponent("main.swift")
-      try NSFileManager().createSymbolicLinkAtURL(mainFlockURL, withDestinationURL: flockfileURL)
-      
-      // Create deploy/production.swift
-      let productionURL = deployURL.URLByAppendingPathComponent("production.swift")
-      guard !productionURL.checkResourceIsReachableAndReturnError(nil) else {
-        throw CLIError.Error("deploy/production.swift must not already exist")
-      } 
-      try productionDefault().writeToURL(productionURL, atomically: true, encoding: NSUTF8StringEncoding)
-      
-      // Symlink deploy/production.swift to deploy/flock/production.swift
-      let productionFlockURL = flockURL.URLByAppendingPathComponent("production.swift")
-      try NSFileManager().createSymbolicLinkAtURL(productionFlockURL, withDestinationURL: productionURL)
+        // Ensure required files do not already exist
+        for directory in [flockDirectory] { 
+            if directoryExists(directory) {
+                throw CLIError.Error("\(directory) must not already exist") 
+            }
+        }
+        for file in [flockfile, productionFile, stagingFile] { 
+            if fileExists(file) {
+                throw CLIError.Error("\(file) must not already exist") 
+            }
+        }
+        
+        // Create files
+        try createDirectoryAtPath(flockDirectory)
+        try createFileAtPath(packageFile, contents: packageDefault())
+        
+        try createFileAtPath(flockfile, contents: flockfileDefault())
+        try createSymlinkAtPath(linkedFlockfile, toPath: flockfile)
+        
+        try createFileAtPath(productionFile, contents: productionDefault())
+        try createSymlinkAtPath(linkedProductionFile, toPath: productionFile)
+        
+        try createFileAtPath(stagingFile, contents: stagingDefault())
+        try createSymlinkAtPath(linkedStagingFile, toPath: stagingFile)
+    }
+    
+    // MARK: - URL helpers
+    
+    private func directoryExists(path: String) -> Bool {
+        let directoryURL = NSURL(fileURLWithPath: path, isDirectory: true)
+        return directoryURL.checkResourceIsReachableAndReturnError(nil)
+    }
+    
+    private func fileExists(path: String) -> Bool {
+        let directoryURL = NSURL(fileURLWithPath: path, isDirectory: false)
+        return directoryURL.checkResourceIsReachableAndReturnError(nil)
+    }
+    
+    private func createDirectoryAtPath(path: String) throws {
+        let directoryURL = NSURL(fileURLWithPath: path, isDirectory: true)
+                
+        try NSFileManager().createDirectoryAtURL(directoryURL, withIntermediateDirectories: true, attributes: nil)
+    }
+    
+    private func createFileAtPath(path: String, contents: String) throws {
+        let fileURL = NSURL(fileURLWithPath: path, isDirectory: false)
+        
+        try contents.writeToURL(fileURL, atomically: true, encoding: NSUTF8StringEncoding)
+    }
+    
+    private func createSymlinkAtPath(path: String, toPath: String) throws {
+        let linkURL = NSURL(fileURLWithPath: path, isDirectory: false)
+        let destinationURL = NSURL(fileURLWithPath: toPath, isDirectory: false)
+        
+        try NSFileManager().createSymbolicLinkAtURL(linkURL, withDestinationURL: destinationURL)
     }
     
     // MARK: - Defaults
@@ -67,6 +99,7 @@ class InitCommand: CommandType {
         "Flock.use(Flock.Default)",
         "",
         "Flock.addConfiguration(Production(), .Environment(\"production\")) // Located at deploy/production.swift",
+        "Flock.addConfiguration(Staging(), .Environment(\"staging\")) // Located at deploy/staging.swift",
         "",
         "Flock.run()",
         ""
@@ -78,6 +111,19 @@ class InitCommand: CommandType {
         "import Flock",
         "",
         "class Production: Configuration {",
+        "    func configure() {",
+        "        // Flock.Deploy.quickly = true",
+        "    }",
+        "}",
+        ""
+      ].joinWithSeparator("\n")
+    }
+    
+    private func stagingDefault() -> String {
+      return [
+        "import Flock",
+        "",
+        "class Staging: Configuration {",
         "    func configure() {",
         "        // Flock.Deploy.quickly = true",
         "    }",
