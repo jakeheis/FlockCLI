@@ -8,10 +8,9 @@ class ForwardCommand: CommandType {
     let commandShortDescription = ""
     
     func execute(arguments: CommandArguments) throws {
-      let flockfileURL = NSURL(fileURLWithPath: "Flockfile.swift", isDirectory: true)
-      guard flockfileURL.checkResourceIsReachableAndReturnError(nil) else {
-        throw CLIError.Error("Flock has not been initialized in this directory yet - run `flock init`")
-      } 
+      if !flockIsInitialized() {
+          throw CLIError.Error("Flock has not been initialized in this directory yet - run `flock init`")
+      }
             
       let task = NSTask()
       task.launchPath = "./deploy/flock/.build/debug/flockfile"

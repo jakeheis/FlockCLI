@@ -8,11 +8,15 @@ class InitCommand: CommandType {
     let commandShortDescription = ""
     
     func execute(arguments: CommandArguments) throws {
+        if flockIsInitialized() {
+            throw CLIError.Error("Flock has already been initialized")
+        }
+      
         let flockDirectory = "deploy/flock"
         let packageFile = "deploy/flock/Package.swift"
         
-        let flockfile = "Flockfile.swift"
-        let linkedFlockfile = "deploy/flock/main.swift"
+        let mainFile = "deploy/flock/main.swift"
+        let flockfile = "Flockfile"
         
         let productionFile = "deploy/production.swift"
         let linkedProductionFile = "deploy/flock/production.swift"
@@ -35,8 +39,8 @@ class InitCommand: CommandType {
         try createDirectoryAtPath(flockDirectory)
         try createFileAtPath(packageFile, contents: packageDefault())
         
-        try createFileAtPath(flockfile, contents: flockfileDefault())
-        try createSymlinkAtPath(linkedFlockfile, toPath: flockfile)
+        try createFileAtPath(mainFile, contents: flockfileDefault())
+        try createSymlinkAtPath(flockfile, toPath: mainFile)
         
         try createFileAtPath(productionFile, contents: productionDefault())
         try createSymlinkAtPath(linkedProductionFile, toPath: productionFile)
@@ -132,4 +136,10 @@ class InitCommand: CommandType {
       ].joinWithSeparator("\n")
     }
   
+}
+
+extension CommandType {
+    func flockIsInitialized() -> Bool {
+        return NSURL(fileURLWithPath: "Flockfile", isDirectory: false).checkResourceIsReachableAndReturnError(nil)
+    }
 }
