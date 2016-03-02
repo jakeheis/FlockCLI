@@ -12,41 +12,32 @@ class InitCommand: CommandType {
             throw CLIError.Error("Flock has already been initialized")
         }
       
-        let flockDirectory = "deploy/flock"
-        let packageFile = "deploy/flock/Package.swift"
-        
-        let mainFile = "deploy/flock/main.swift"
-        let flockfile = "Flockfile"
-        
-        let productionFile = "deploy/production.swift"
-        let linkedProductionFile = "deploy/flock/production.swift"
-        let stagingFile = "deploy/staging.swift"
-        let linkedStagingFile = "deploy/flock/staging.swift"
-      
         // Ensure required files do not already exist
-        for directory in [flockDirectory] { 
+        for directory in [Paths.flockDirectory] { 
             if directoryExists(directory) {
                 throw CLIError.Error("\(directory) must not already exist") 
             }
         }
-        for file in [flockfile, productionFile, stagingFile] { 
+        for file in [Paths.flockfile, Paths.productionFile, Paths.stagingFile, Paths.packageFile] { 
             if fileExists(file) {
                 throw CLIError.Error("\(file) must not already exist") 
             }
         }
         
         // Create files
-        try createDirectoryAtPath(flockDirectory)
-        try createFileAtPath(packageFile, contents: packageDefault())
+        try createDirectoryAtPath(Paths.flockDirectory)
         
-        try createFileAtPath(mainFile, contents: flockfileDefault())
-        try createSymlinkAtPath(flockfile, toPath: mainFile)
+        try createFileAtPath(Paths.packageFile, contents: packageDefault())
+        try createSymlinkAtPath(Paths.packageFileLink, toPath: Paths.packageFile)
         
-        try createFileAtPath(productionFile, contents: productionDefault())
-        try createSymlinkAtPath(linkedProductionFile, toPath: productionFile)
+        try createFileAtPath(Paths.mainFile, contents: flockfileDefault())
+        try createSymlinkAtPath(Paths.flockfile, toPath: Paths.mainFile)
         
-        try createFileAtPath(stagingFile, contents: stagingDefault())
-        try createSymlinkAtPath(linkedStagingFile, toPath: stagingFile)
+        try createFileAtPath(Paths.productionFile, contents: productionDefault())
+        try createSymlinkAtPath(Paths.productionFileLink, toPath: Paths.productionFile)
+        
+        try createFileAtPath(Paths.stagingFile, contents: stagingDefault())
+        try createSymlinkAtPath(Paths.stagingFileLink, toPath: Paths.stagingFile)
     }
     
     // MARK: - URL helpers

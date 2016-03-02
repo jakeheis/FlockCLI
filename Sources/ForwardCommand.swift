@@ -13,7 +13,7 @@ class ForwardCommand: CommandType {
       }
             
       let task = NSTask()
-      task.launchPath = "./deploy/flock/.build/debug/flockfile"
+      task.launchPath = "\(Paths.flockDirectory)/.build/debug/flockfile"
       task.arguments = arguments.optionalCollectedArgument("optional")
       task.launch()
       task.waitUntilExit()
