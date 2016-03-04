@@ -78,9 +78,9 @@ class InitCommand: CommandType {
         "import PackageDescription",
         "",
         "let package = Package(",
-        "  name: \"Flockfile\",",
+        "  name: \"Flockfile\", // Don't change this!",
         "  dependencies: [",
-        "    .Package(url: \"/Users/jakeheiser/Documents/Swift/Flock\", majorVersion: 0, minor: 0),",
+        "    .Package(url: \"/Users/jakeheiser/Documents/Swift/Flock\", majorVersion: 0, minor: 0)",
         "  ]",
         ")",
         ""
@@ -91,7 +91,7 @@ class InitCommand: CommandType {
       return [
         "import Flock",
         "",
-        "Flock.use(Flock.Default)",
+        "Flock.use(Flock.Deploy)",
         "",
         "Flock.addConfiguration(Production(), .Environment(\"production\")) // Located at deploy/production.swift",
         "Flock.addConfiguration(Staging(), .Environment(\"staging\")) // Located at deploy/staging.swift",
