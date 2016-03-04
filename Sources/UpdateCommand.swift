@@ -8,10 +8,10 @@ class UpdateCommand: CommandType {
     let commandShortDescription = ""
 
     func execute(arguments: CommandArguments) throws {
-        guard let packagesURL = NSURL(string: "deploy/flock/Packages") else {
+        guard let packagesURL = NSURL(string: "\(Paths.flockDirectory)/Packages") else {
             throw CLIError.Error("URL error")
         }
-      
+        
         let packages = try NSFileManager().contentsOfDirectoryAtURL(packagesURL, includingPropertiesForKeys: nil, options: [])
         for package in packages {
             guard let path = package.path else {
