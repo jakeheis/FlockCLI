@@ -11,7 +11,7 @@ class CleanCommand: CommandType {
           let task = NSTask()
           task.launchPath = "/bin/rm"
           task.arguments = ["-r", ".build"]
-          task.currentDirectoryPath = "./deploy/flock"
+          task.currentDirectoryPath = Paths.flockDirectory
           task.launch()
           task.waitUntilExit()
       }
