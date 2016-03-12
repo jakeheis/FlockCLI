@@ -1,8 +1,8 @@
 import PackageDescription
 
 let package = Package(
-  name: "FlockCLI",
-  dependencies: [
-    .Package(url: "/Users/jakeheiser/Documents/Apps/SwiftCLI", majorVersion: 1, minor: 1)
-  ]
+    name: "FlockCLI",
+    dependencies: [
+        .Package(url: "https://github.com/jakeheis/SwiftCLI", majorVersion: 1, minor: 2)
+    ]
 )
