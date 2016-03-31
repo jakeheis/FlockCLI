@@ -11,9 +11,13 @@ class ForwardCommand: CommandType {
       if !FileHelpers.flockIsInitialized() {
           throw CLIError.Error("Flock has not been initialized in this directory yet - run `flock init`")
       }
+      
+      if !FileHelpers.fileExists(Paths.launchPath) {
+          Builder.build()
+      }
             
       let task = NSTask()
-      task.launchPath = "\(Paths.flockDirectory)/.build/debug/flockfile"
+      task.launchPath = Paths.launchPath
       task.arguments = arguments.optionalCollectedArgument("optional")
       task.launch()
       task.waitUntilExit()

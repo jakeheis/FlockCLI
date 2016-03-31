@@ -6,4 +6,6 @@ struct Paths {
     
     static let mainFile = "\(flockDirectory)/main.swift"
     static let flockfile = "Flockfile"
+    
+    static let launchPath = "\(flockDirectory)/.build/debug/flockfile"
 }
