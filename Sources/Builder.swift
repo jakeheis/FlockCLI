@@ -3,13 +3,15 @@ import SwiftCLI
 
 class Builder {
     
-    static func build() {
+    static func build() -> Bool {
         let task = NSTask()
         task.launchPath = "/usr/bin/env"
         task.currentDirectoryPath = Paths.flockDirectory
         task.arguments = ["swift", "build"]
         task.launch()
         task.waitUntilExit()
+        
+        return task.terminationStatus == 0
     }
     
     static func update() throws -> Bool {

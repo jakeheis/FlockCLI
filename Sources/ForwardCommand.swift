@@ -13,7 +13,10 @@ class ForwardCommand: CommandType {
       }
       
       if !FileHelpers.fileExists(Paths.launchPath) {
-          Builder.build()
+          let result = Builder.build()
+          if result == false {
+              throw CLIError.Error("Error: Flock must be successfully built before tasks can be run".red)
+          }
       }
             
       let task = NSTask()
