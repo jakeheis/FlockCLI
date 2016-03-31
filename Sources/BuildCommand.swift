@@ -20,7 +20,7 @@ class BuildCommand: OptionCommandType {
     }
     
     func execute(arguments: CommandArguments) throws {
-      if !flockIsInitialized() {
+      if !FileHelpers.flockIsInitialized() {
           throw CLIError.Error("Flock has not been initialized in this directory yet - run `flock init`")
       }
       
