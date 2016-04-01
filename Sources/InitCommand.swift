@@ -71,9 +71,9 @@ class InitCommand: CommandType {
             "",
             "Flock.use(Flock.Deploy)",
             "",
-            "Flock.addConfiguration(Always(), .Always) // Located at deploy/Always.swift",
-            "Flock.addConfiguration(Production(), .Environment(\"production\")) // Located at deploy/Production.swift",
-            "Flock.addConfiguration(Staging(), .Environment(\"staging\")) // Located at deploy/Staging.swift",
+            "Flock.configure(.Always, Always()) // Located at deploy/Always.swift",
+            "Flock.configure(.Environment(\"production\"), Production()) // Located at deploy/Production.swift",
+            "Flock.configure(.Environment(\"staging\"), Staging()) // Located at deploy/Staging.swift",
             "",
             "Flock.run()",
             ""
