@@ -1,11 +1,12 @@
+import Darwin
 import SwiftCLI
 
 CLI.setup(name: "flock")
 
-CLI.router = DefaultRouter(defaultCommand: ForwardCommand())
+CLI.router = DefaultRouter(fallbackCommand: ForwardCommand())
 
-CLI.registerCommand(InitCommand())
-CLI.registerCommand(BuildCommand())
-CLI.registerCommand(AddEnvironmentCommand())
+CLI.register(command: InitCommand())
+CLI.register(command: BuildCommand())
+CLI.register(command: AddEnvironmentCommand())
 
-CLI.go()
+exit(CLI.go())

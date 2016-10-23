@@ -1,10 +1,10 @@
 import SwiftCLI
 
-class AddEnvironmentCommand: CommandType {
+class AddEnvironmentCommand: Command {
     
-    let commandName = "add-env"
-    let commandSignature = "<env>"
-    let commandShortDescription = "Adds an environment"
+    let name = "add-env"
+    let signature = "<env>"
+    let shortDescription = "Adds an environment"
     
     func execute(arguments: CommandArguments) throws {
         let environment = arguments.requiredArgument("env")
@@ -21,11 +21,11 @@ class EnvironmentCreator {
     let defaults: [String]?
     
     var environmentFile: String {
-        return "deploy/\(env.capitalizedString).swift"
+        return "deploy/\(env.capitalized).swift"
     }
     
     var environmentLink: String {
-        return "\(Paths.flockDirectory)/\(env.capitalizedString).swift"
+        return "\(Paths.flockDirectory)/\(env.capitalized).swift"
     }
     
     init(env: String, defaults: [String]? = nil) {
@@ -39,13 +39,13 @@ class EnvironmentCreator {
     
     func create() throws {
         guard canCreate else {
-            throw CLIError.Error("\(environmentFile) and \(environmentLink) must not exist for you to create this env")
+            throw CLIError.error("\(environmentFile) and \(environmentLink) must not exist for you to create this env")
         }
         
         var lines = [
             "import Flock",
             "",
-            "class \(env.capitalizedString): Configuration {",
+            "class \(env.capitalized): Configuration {",
             "    func configure() {"
         ]
         if let defaults = defaults {
@@ -56,10 +56,10 @@ class EnvironmentCreator {
             "}",
             ""
         ]
-        let text = lines.joinWithSeparator("\n")
+        let text = lines.joined(separator: "\n")
         
-        try FileHelpers.createFileAtPath(environmentFile, contents: text)
-        try FileHelpers.createSymlinkAtPath(environmentLink, toPath: environmentFile)
+        try FileHelpers.createFile(at: environmentFile, contents: text)
+        try FileHelpers.createSymlink(at: environmentLink, toPath: environmentFile)
     }
     
 }

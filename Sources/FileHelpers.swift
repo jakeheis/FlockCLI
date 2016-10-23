@@ -3,36 +3,36 @@ import Foundation
 class FileHelpers {
     
     static func flockIsInitialized() -> Bool {
-        return NSURL(fileURLWithPath: "Flockfile", isDirectory: false).checkResourceIsReachableAndReturnError(nil)
+        return (try? URL(fileURLWithPath: "Flockfile", isDirectory: false).checkResourceIsReachable()) ?? false
     }
     
-    static func directoryExists(path: String) -> Bool {
-        let directoryURL = NSURL(fileURLWithPath: path, isDirectory: true)
-        return directoryURL.checkResourceIsReachableAndReturnError(nil)
+    static func directoryExists(_ path: String) -> Bool {
+        let directoryURL = URL(fileURLWithPath: path, isDirectory: true)
+        return (try? directoryURL.checkResourceIsReachable()) ?? false
     }
     
-    static func fileExists(path: String) -> Bool {
-        let directoryURL = NSURL(fileURLWithPath: path, isDirectory: false)
-        return directoryURL.checkResourceIsReachableAndReturnError(nil)
+    static func fileExists(_ path: String) -> Bool {
+        let fileURL = URL(fileURLWithPath: path, isDirectory: false)
+        return (try? fileURL.checkResourceIsReachable()) ?? false
     }
     
-    static func createDirectoryAtPath(path: String) throws {
-        let directoryURL = NSURL(fileURLWithPath: path, isDirectory: true)
+    static func createDirectory(at path: String) throws {
+        let directoryURL = URL(fileURLWithPath: path, isDirectory: true)
                 
-        try NSFileManager().createDirectoryAtURL(directoryURL, withIntermediateDirectories: true, attributes: nil)
+        try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
     }
     
-    static func createFileAtPath(path: String, contents: String) throws {
-        let fileURL = NSURL(fileURLWithPath: path, isDirectory: false)
+    static func createFile(at path: String, contents: String) throws {
+        let fileURL = URL(fileURLWithPath: path, isDirectory: false)
         
-        try contents.writeToURL(fileURL, atomically: true, encoding: NSUTF8StringEncoding)
+        try contents.write(to: fileURL, atomically: true, encoding: .utf8)
     }
     
-    static func createSymlinkAtPath(path: String, toPath: String) throws {
-        let linkURL = NSURL(fileURLWithPath: path, isDirectory: false)
-        let destinationURL = NSURL(fileURLWithPath: toPath, isDirectory: false)
+    static func createSymlink(at path: String, toPath: String) throws {
+        let linkURL = URL(fileURLWithPath: path, isDirectory: false)
+        let destinationURL = URL(fileURLWithPath: toPath, isDirectory: false)
         
-        try NSFileManager().createSymbolicLinkAtURL(linkURL, withDestinationURL: destinationURL)
+        try FileManager.default.createSymbolicLink(at: linkURL, withDestinationURL: destinationURL)
     }
     
 }

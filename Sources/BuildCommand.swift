@@ -1,26 +1,26 @@
 import SwiftCLI
 
-class BuildCommand: OptionCommandType {
+class BuildCommand: OptionCommand {
   
-    let commandName = "build"
-    let commandSignature = ""
-    let commandShortDescription = ""
+    let name = "build"
+    let signature = ""
+    let shortDescription = ""
     
     var shouldUpdate = false
     var shouldClean = false
     
-    func setupOptions(options: Options) {
-        options.onFlags(["-u", "--update"]) {(flag) in
+    func setupOptions(options: OptionRegistry) {
+        options.add(flags: ["-u", "--update"]) {
             self.shouldUpdate = true
         }
-        options.onFlags(["-c", "--clean"]) {(flag) in
+        options.add(flags: ["-c", "--clean"]) {
             self.shouldClean = true
         }
     }
     
     func execute(arguments: CommandArguments) throws {
       if !FileHelpers.flockIsInitialized() {
-          throw CLIError.Error("Flock has not been initialized in this directory yet - run `flock init`")
+          throw CLIError.error("Flock has not been initialized in this directory yet - run `flock init`")
       }
       
       if shouldUpdate {

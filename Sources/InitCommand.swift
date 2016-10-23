@@ -2,26 +2,26 @@ import Foundation
 import SwiftCLI
 import Rainbow
 
-class InitCommand: CommandType {
+class InitCommand: Command {
   
-    let commandName = "init"
-    let commandSignature = ""
-    let commandShortDescription = ""
+    let name = "init"
+    let signature = ""
+    let shortDescription = ""
     
     func execute(arguments: CommandArguments) throws {
         if FileHelpers.flockIsInitialized() {
-            throw CLIError.Error("Flock has already been initialized")
+            throw CLIError.error("Flock has already been initialized")
         }
         
         // Ensure required files do not already exist
         for directory in [Paths.flockDirectory] { 
             if FileHelpers.directoryExists(directory) {
-                throw CLIError.Error("\(directory) must not already exist") 
+                throw CLIError.error("\(directory) must not already exist")
             }
         }
         for file in [Paths.flockfile, Paths.packageFile] { 
             if FileHelpers.fileExists(file) {
-                throw CLIError.Error("\(file) must not already exist") 
+                throw CLIError.error("\(file) must not already exist")
             }
         }
         
@@ -30,17 +30,17 @@ class InitCommand: CommandType {
         let stagingCreator = EnvironmentCreator(env: "staging", defaults: stagingDefaults())
         
         guard alwaysCreator.canCreate && productionCreator.canCreate && stagingCreator.canCreate else {
-            throw CLIError.Error("deploy/[always,production,staging].swift and deploy/.flock/[always,production,staging].swift must not already exist")
+            throw CLIError.error("deploy/[always,production,staging].swift and deploy/.flock/[always,production,staging].swift must not already exist")
         }
         
         // Create files
-        try FileHelpers.createDirectoryAtPath(Paths.flockDirectory)
+        try FileHelpers.createDirectory(at: Paths.flockDirectory)
         
-        try FileHelpers.createFileAtPath(Paths.packageFile, contents: packageDefault())
-        try FileHelpers.createSymlinkAtPath(Paths.packageFileLink, toPath: Paths.packageFile)
+        try FileHelpers.createFile(at: Paths.packageFile, contents: packageDefault())
+        try FileHelpers.createSymlink(at: Paths.packageFileLink, toPath: Paths.packageFile)
         
-        try FileHelpers.createFileAtPath(Paths.mainFile, contents: flockfileDefault())
-        try FileHelpers.createSymlinkAtPath(Paths.flockfile, toPath: Paths.mainFile)
+        try FileHelpers.createFile(at: Paths.mainFile, contents: flockfileDefault())
+        try FileHelpers.createSymlink(at: Paths.flockfile, toPath: Paths.mainFile)
         
         try alwaysCreator.create()
         try productionCreator.create()
@@ -52,17 +52,17 @@ class InitCommand: CommandType {
     // MARK: - Defaults
     
     private func packageDefault() -> String {
-      return [
-        "import PackageDescription",
-        "",
-        "let package = Package(",
-        "   name: \"Flockfile\", // Don't change this!",
-        "   dependencies: [",
-        "       .Package(url: \"/Users/jakeheiser/Documents/Swift/Flock\", majorVersion: 0, minor: 0)",
-        "   ]",
-        ")",
-        ""
-      ].joinWithSeparator("\n")
+        return [
+            "import PackageDescription",
+            "",
+            "let package = Package(",
+            "   name: \"Flockfile\", // Don't change this!",
+            "   dependencies: [",
+            "       .Package(url: \"/Users/jakeheiser/Documents/Swift/Flock\", majorVersion: 0, minor: 0)",
+            "   ]",
+            ")",
+            ""
+        ].joined(separator: "\n")
     }
   
     private func flockfileDefault() -> String {
@@ -77,7 +77,7 @@ class InitCommand: CommandType {
             "",
             "Flock.run()",
             ""
-        ].joinWithSeparator("\n")
+        ].joined(separator: "\n")
     }
     
     private func productionDefaults() -> [String] {
@@ -93,15 +93,15 @@ class InitCommand: CommandType {
     }
     
     private func alwaysDefaults() -> [String] {
-        let name = inputProjectName() ?? "Project"
+        let name = inputProjectName()
         return [
             "Config.projectName = \"\(name)\"",
             "// Config.repoURL = \"URL\""
         ]
     }
   
-    private func inputProjectName() -> String? {
-        return try? Input.awaitInput(message: "Project name (must be same as in Package.swift): ")
+    private func inputProjectName() -> String {
+        return Input.awaitInput(message: "Project name (must be same as in Package.swift): ")
         // guard let text = try? String(contentsOfFile: "Package.swift", encoding: NSUTF8StringEncoding) else {
         //     print("WARNING: The name of your project could not be found (we looked for a Package.swift). In order to ensure Flock works correctly, make sure you edit deploy/Always.swift to reflect your true project name.".red)
         //     return nil

@@ -3,8 +3,9 @@ import SwiftCLI
 
 class Builder {
     
+    @discardableResult
     static func build() -> Bool {
-        let task = NSTask()
+        let task = Process()
         task.launchPath = "/usr/bin/env"
         task.currentDirectoryPath = Paths.flockDirectory
         task.arguments = ["swift", "build"]
@@ -15,33 +16,31 @@ class Builder {
     }
     
     static func update() throws -> Bool {
-        guard let packagesURL = NSURL(string: "\(Paths.flockDirectory)/Packages") else {
-            throw CLIError.Error("URL error")
+        guard let packagesURL = URL(string: "\(Paths.flockDirectory)/Packages") else {
+            throw CLIError.error("URL error")
         }
         
         var anyUpdated = false
         
-        let packages = try NSFileManager().contentsOfDirectoryAtURL(packagesURL, includingPropertiesForKeys: nil, options: [])
+        let packages = try FileManager.default.contentsOfDirectory(at: packagesURL, includingPropertiesForKeys: nil, options: [])
         for package in packages {
-            guard let path = package.path else {
-                continue
-            }
+            let path = package.path
           
-            let task = NSTask()
+            let task = Process()
             task.launchPath = "/usr/local/bin/git"
             task.arguments = ["pull"]
             task.currentDirectoryPath = path
             
-            let output = NSPipe()
+            let output = Pipe()
             task.standardOutput = output
             
             task.launch()
             task.waitUntilExit()
             
             let data = output.fileHandleForReading.readDataToEndOfFile()
-            let string = String(data: data, encoding: NSUTF8StringEncoding)
+            let string = String(data: data, encoding: .utf8)
             
-            if let string = string where !string.hasPrefix("Already up-to-date") {
+            if let string = string, !string.hasPrefix("Already up-to-date") {
                 anyUpdated = true
             }
         }
@@ -50,7 +49,7 @@ class Builder {
     }
     
     static func clean() {
-        let task = NSTask()
+        let task = Process()
         task.launchPath = "/bin/rm"
         task.arguments = ["-r", ".build"]
         task.currentDirectoryPath = Paths.flockDirectory
