@@ -67,28 +67,35 @@ class InitCommand: Command {
   
     private func flockfileDefault() -> String {
       return [
+            "#if os(Linux)",
+            "import Glibc",
+            "#else",
+            "import Darwin",
+            "#endif",
+            "",
             "import Flock",
             "",
             "Flock.use(Flock.Deploy)",
             "",
-            "Flock.configure(.Always, Always()) // Located at deploy/Always.swift",
-            "Flock.configure(.Environment(\"production\"), Production()) // Located at deploy/Production.swift",
-            "Flock.configure(.Environment(\"staging\"), Staging()) // Located at deploy/Staging.swift",
+            "Flock.configure(.always, with: Always()) // Located at deploy/Always.swift",
+            "Flock.configure(.env(\"production\"), with: Production()) // Located at deploy/Production.swift",
+            "Flock.configure(.env(\"staging\"), with: Staging()) // Located at deploy/Staging.swift",
             "",
-            "Flock.run()",
+            "let result = Flock.run()",
+            "exit(result)",
             ""
         ].joined(separator: "\n")
     }
     
     private func productionDefaults() -> [String] {
       return [
-            "// Servers.add(SSHHost: \"ProductionServer\", roles: [.App, .DB, .Web])"
+            "// Servers.add(SSHHost: \"ProductionServer\", roles: [.app, .db, .web])"
       ]
     }
     
     private func stagingDefaults() -> [String] {
         return [
-            "// Servers.add(SSHHost: \"StagingServer\", roles: [.App, .DB, .Web])"
+            "// Servers.add(SSHHost: \"StagingServer\", roles: [.app, .db, .web])"
         ]
     }
     
