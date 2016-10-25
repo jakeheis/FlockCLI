@@ -37,7 +37,7 @@ class InitCommand: Command {
         try FileHelpers.createDirectory(at: Paths.flockDirectory)
         
         try FileHelpers.createFile(at: Paths.packageFile, contents: packageDefault())
-        try FileHelpers.createSymlink(at: Paths.packageFileLink, toPath: Paths.packageFile)
+        try FileHelpers.createFile(at: Paths.dependenciesFile, contents: dependenciesDefault())
         
         try FileHelpers.createFile(at: Paths.mainFile, contents: flockfileDefault())
         try FileHelpers.createSymlink(at: Paths.flockfile, toPath: Paths.mainFile)
@@ -53,26 +53,47 @@ class InitCommand: Command {
     
     private func packageDefault() -> String {
         return [
+            "// Don't change!",
+            "",
             "import PackageDescription",
+            "import Foundation",
             "",
             "let package = Package(",
-            "   name: \"Flockfile\", // Don't change this!",
-            "   dependencies: [",
-            "       .Package(url: \"/Users/jakeheiser/Documents/Swift/Flock\", majorVersion: 0, minor: 0)",
-            "   ]",
+            "   name: \"Flockfile\"",
             ")",
+            "",
+            "let url = URL(fileURLWithPath: \"../FlockDependencies.json\")",
+            "if let data = try? Data(contentsOf: url),",
+            "    let json = (try? JSONSerialization.jsonObject(with: data, options: [])) as? [String: [[String: Any]]],",
+            "    let dependencies = json[\"dependencies\"] {",
+            "    ",
+            "    for dependency in dependencies {",
+            "        guard let name = dependency[\"name\"] as? String else {",
+            "            print(\"Ignoring invalid dependency \\(dependency)\")",
+            "            continue",
+            "        }",
+            "        let dependencyPackage: Package.Dependency",
+            "        if let version = dependency[\"version\"] as? String, let packageVersion = Version(version) {",
+            "            dependencyPackage = Package.Dependency.Package(url: name, packageVersion)",
+            "        } else if let major = dependency[\"major\"] as? Int {",
+            "            if let minor = dependency[\"minor\"] as? Int {",
+            "                dependencyPackage = Package.Dependency.Package(url: name, majorVersion: major, minor: minor)",
+            "            } else {",
+            "                dependencyPackage = Package.Dependency.Package(url: name, majorVersion: major)",
+            "            }",
+            "        } else {",
+            "            print(\"Ignoring invalid dependency \\(name)\")",
+            "            continue",
+            "        }",
+            "        package.dependencies.append(dependencyPackage)",
+            "    }",
+            "}",
             ""
         ].joined(separator: "\n")
     }
   
     private func flockfileDefault() -> String {
       return [
-            "#if os(Linux)",
-            "import Glibc",
-            "#else",
-            "import Darwin",
-            "#endif",
-            "",
             "import Flock",
             "",
             "Flock.use(Flock.Deploy)",
@@ -81,8 +102,30 @@ class InitCommand: Command {
             "Flock.configure(.env(\"production\"), with: Production()) // Located at deploy/Production.swift",
             "Flock.configure(.env(\"staging\"), with: Staging()) // Located at deploy/Staging.swift",
             "",
-            "let result = Flock.run()",
-            "exit(result)",
+            "Flock.run()",
+            ""
+        ].joined(separator: "\n")
+    }
+    
+    private func dependenciesDefault() -> String {
+//        let object = [
+//            "dependencies": [
+//                [
+//                    "name": "/Users/jakeheiser/Documents/Swift/Flock",
+//                    "version": "0.0.1"
+//                ]
+//            ]
+//        ]
+//        return try! JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted])
+        return [
+            "{",
+            "   \"dependencies\" : [",
+            "       {",
+            "           \"name\" : \"/Users/jakeheiser/Documents/Swift/Flock\",",
+            "           \"version\": \"0.0.1\"",
+            "       }",
+            "   ]",
+            "}",
             ""
         ].joined(separator: "\n")
     }

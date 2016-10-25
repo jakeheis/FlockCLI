@@ -21,7 +21,7 @@ class ForwardCommand: Command {
             
       let task = Process()
       task.launchPath = Paths.launchPath
-      task.arguments = arguments.optionalCollectedArgument("optional")
+      task.arguments = arguments.optionalCollectedArgument("optional") ?? []
       task.launch()
       task.waitUntilExit()
     }

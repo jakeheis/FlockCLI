@@ -1,8 +1,8 @@
 struct Paths {
     static let flockDirectory = "deploy/.flock"
     
-    static let packageFile = "deploy/FlockPackage.swift"
-    static let packageFileLink = "\(flockDirectory)/Package.swift"
+    static let packageFile = "\(flockDirectory)/Package.swift"
+    static let dependenciesFile = "deploy/FlockDependencies.json"
     
     static let mainFile = "\(flockDirectory)/main.swift"
     static let flockfile = "Flockfile"

@@ -28,6 +28,12 @@ class FileHelpers {
         try contents.write(to: fileURL, atomically: true, encoding: .utf8)
     }
     
+    static func createFile(at path: String, contents: Data) throws {
+        let fileURL = URL(fileURLWithPath: path, isDirectory: false)
+        
+        try contents.write(to: fileURL, options: [.atomic])
+    }
+    
     static func createSymlink(at path: String, toPath: String) throws {
         let linkURL = URL(fileURLWithPath: path, isDirectory: false)
         let destinationURL = URL(fileURLWithPath: toPath, isDirectory: false)
