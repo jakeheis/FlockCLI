@@ -25,6 +25,8 @@ class InitCommand: Command {
             }
         }
         
+        print("Creating Flock files...".yellow)
+        
         let alwaysCreator = EnvironmentCreator(env: "always", defaults: alwaysDefaults())
         let productionCreator = EnvironmentCreator(env: "production", defaults: productionDefaults())
         let stagingCreator = EnvironmentCreator(env: "staging", defaults: stagingDefaults())
@@ -46,7 +48,13 @@ class InitCommand: Command {
         try productionCreator.create()
         try stagingCreator.create()
         
-        print("Successfully initialized flock!".green)
+        print("Successfully created Flock files".green)
+        
+        print("Downloading and building dependencies...".yellow)
+        Builder.build(silent: true)
+        print("Successfully downloaded dependencies".green)
+        
+        print("Successfully initialized Flock!".green)
         
         print("Steps to take to ensure Flock works correctly:".yellow)
         print("1. Update the required fields in deploy/Always.swift")

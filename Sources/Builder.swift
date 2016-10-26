@@ -4,11 +4,15 @@ import SwiftCLI
 class Builder {
     
     @discardableResult
-    static func build() -> Bool {
+    static func build(silent: Bool = false) -> Bool {
         let task = Process()
         task.launchPath = "/usr/bin/env"
         task.currentDirectoryPath = Paths.flockDirectory
         task.arguments = ["swift", "build"]
+        if silent {
+            task.standardOutput = Pipe()
+            task.standardError = Pipe()
+        }
         task.launch()
         task.waitUntilExit()
         
