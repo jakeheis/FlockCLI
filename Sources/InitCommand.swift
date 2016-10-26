@@ -56,12 +56,14 @@ class InitCommand: Command {
         
         print("Successfully initialized Flock!".green)
         
-        print("Steps to take to ensure Flock works correctly:".yellow)
+        print()
+        print("IN ORDER FOR FLOCK TO WORK CORRECTLY".yellow)
+        print("Follow these steps:".yellow)
         print("1. Update the required fields in deploy/Always.swift")
         print("2. Add your production and staging servers to deploy/Production.swift and deploy/Staging.swift respectively")
         print("3. In your project's Package.swift, add `deploy` to the ignore list")
         print()
-        print("To add Flock dependencies:")
+        print("To add Flock dependencies:".yellow)
         print("1. Add the url and version of the dependency to deploy/FlockDependencies.json")
         print("2. in your Flockfile, at the top of the file import your dependency and below add `Flock.use(Dependency)`")
     }
