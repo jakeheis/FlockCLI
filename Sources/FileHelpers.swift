@@ -18,7 +18,7 @@ class FileHelpers {
     
     static func createDirectory(at path: String) throws {
         let directoryURL = URL(fileURLWithPath: path, isDirectory: true)
-                
+        
         try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
     }
     

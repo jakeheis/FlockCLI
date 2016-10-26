@@ -4,7 +4,7 @@ import Rainbow
 
 class InitCommand: Command {
   
-    let name = "init"
+    let name = "--init"
     let signature = ""
     let shortDescription = ""
     
@@ -47,6 +47,13 @@ class InitCommand: Command {
         try stagingCreator.create()
         
         print("Successfully initialized flock!".green)
+        
+        print("Steps to take to ensure Flock works correctly:".yellow)
+        print("1. Update the required fields in deploy/Always.swift")
+        print("2. Add your production and staging servers to deploy/Production.swift and deploy/Staging.swift respectively")
+        print("3. To add Flock dependencies:")
+        print("   a. Add the url and version to deploy/FlockDependencies.swift")
+        print("   b. in your Flockfile, at the top of the file import your dependency and below add `Flock.use(Dependency)`")
     }
     
     // MARK: - Defaults
@@ -108,15 +115,6 @@ class InitCommand: Command {
     }
     
     private func dependenciesDefault() -> String {
-//        let object = [
-//            "dependencies": [
-//                [
-//                    "name": "/Users/jakeheiser/Documents/Swift/Flock",
-//                    "version": "0.0.1"
-//                ]
-//            ]
-//        ]
-//        return try! JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted])
         return [
             "{",
             "   \"dependencies\" : [",
@@ -143,10 +141,14 @@ class InitCommand: Command {
     }
     
     private func alwaysDefaults() -> [String] {
-        let name = inputProjectName()
         return [
-            "Config.projectName = \"\(name)\"",
-            "// Config.repoURL = \"URL\""
+            "// Update these values before using Flock:",
+            "Config.projectName = nil",
+            "Config.executableName = nil",
+            "Config.repoURL = nil",
+            "",
+            "// Optional config:",
+            "// Config.deployDirectory = \"/var/www\""
         ]
     }
   

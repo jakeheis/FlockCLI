@@ -9,4 +9,8 @@ CLI.register(command: InitCommand())
 CLI.register(command: BuildCommand())
 CLI.register(command: AddEnvironmentCommand())
 
+CLI.alias(from: "-h", to: "")
+CLI.alias(from: "help", to: "")
+CLI.alias(from: "version", to: "")
+
 exit(CLI.go())

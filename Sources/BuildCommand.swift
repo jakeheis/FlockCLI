@@ -1,8 +1,8 @@
 import SwiftCLI
 
 class BuildCommand: OptionCommand {
-  
-    let name = "build"
+    
+    let name = "--build"
     let signature = ""
     let shortDescription = ""
     
@@ -19,22 +19,22 @@ class BuildCommand: OptionCommand {
     }
     
     func execute(arguments: CommandArguments) throws {
-      if !FileHelpers.flockIsInitialized() {
-          throw CLIError.error("Flock has not been initialized in this directory yet - run `flock init`")
-      }
-      
-      if shouldUpdate {
-          let updatedAny = try Builder.update()
-          if updatedAny {
-              shouldClean = true
-          }
-      }
-      
-      if shouldClean {
-          Builder.clean()
-      }
-      
-      Builder.build()
+        if !FileHelpers.flockIsInitialized() {
+            throw CLIError.error("Flock has not been initialized in this directory yet - run `flock init`")
+        }
+        
+        if shouldUpdate {
+            let updatedAny = try Builder.update()
+            if updatedAny {
+                shouldClean = true
+            }
+        }
+        
+        if shouldClean {
+            Builder.clean()
+        }
+        
+        Builder.build()
     }
-  
+    
 }

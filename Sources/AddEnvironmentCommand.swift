@@ -2,7 +2,7 @@ import SwiftCLI
 
 class AddEnvironmentCommand: Command {
     
-    let name = "add-env"
+    let name = "--add-env"
     let signature = "<env>"
     let shortDescription = "Adds an environment"
     
@@ -51,7 +51,7 @@ class EnvironmentCreator {
         if let defaults = defaults {
             lines += defaults.map { "\t\t\($0)" }
         }
-        lines += [            
+        lines += [
             "    }",
             "}",
             ""
