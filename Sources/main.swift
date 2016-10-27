@@ -7,6 +7,8 @@ CLI.router = DefaultRouter(fallbackCommand: ForwardCommand())
 
 CLI.register(command: InitCommand())
 CLI.register(command: BuildCommand())
+CLI.register(command: UpdateCommand())
+CLI.register(command: PullCommand())
 CLI.register(command: AddEnvironmentCommand())
 CLI.register(command: CreateTaskCommand())
 
