@@ -44,7 +44,7 @@ class Builder {
     @discardableResult
     static func pull() throws -> Bool {
         var anyUpdated = false
-        for package in Path.packagesDirectory {
+        for package in Path.packagesDirectory.children() {
             let task = Process()
             task.launchPath = "/usr/local/bin/git"
             task.arguments = ["pull"]
