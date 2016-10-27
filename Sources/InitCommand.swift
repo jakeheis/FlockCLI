@@ -61,9 +61,9 @@ class InitCommand: FlockCommand {
             try contents.write(to: path)
         }
         
-        func link(source: Path, to destination: Path) throws {
-            print("Linking \(source.rawValue) to \(destination.rawValue)".cyan)
-            try source.symlinkFile(to: destination)
+        func createLink(at new: Path, pointingTo existing: Path) throws {
+            print("Linking \(new.rawValue) to \(existing.rawValue)".cyan)
+            try new.createLink(pointingTo: existing)
         }
         
         func createEnvironment(with creator: EnvironmentCreator) throws {
@@ -79,7 +79,7 @@ class InitCommand: FlockCommand {
         try write(contents: dependenciesDefault(), to: Path.dependenciesFile)
         
         try write(contents: flockfileDefault(), to: Path.mainFile)
-        try link(source: Path.mainFile, to: Path.flockfile)
+        try createLink(at: Path.flockfile, pointingTo: Path.mainFile)
         
         try createEnvironment(with: alwaysCreator)
         try createEnvironment(with: productionCreator)

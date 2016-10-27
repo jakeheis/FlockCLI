@@ -21,3 +21,11 @@ extension Path {
     
     static let executable = buildDirectory + "debug/flockfile"
 }
+
+extension Path {
+    
+    func createLink(pointingTo path: Path) throws { // Clearer (at least to me)
+        try path.symlinkFile(to: self)
+    }
+    
+}

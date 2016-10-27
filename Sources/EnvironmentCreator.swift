@@ -57,7 +57,7 @@ class EnvironmentCreator {
         let text = lines.joined(separator: "\n")
         
         try text.write(to: environmentFile)
-        try environmentFile.symlinkFile(to: environmentLink)
+        try environmentLink.createLink(pointingTo: Path("..") + fileName)
     }
     
 }
