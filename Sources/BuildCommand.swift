@@ -22,15 +22,15 @@ class BuildCommand: FlockCommand {
     
 }
 
-class UpdateCommand: FlockCommand {
-    let name = "--update"
+class CleanCommand: FlockCommand {
+    let name = "--clean"
     let signature = ""
     let shortDescription = ""
     
     func execute(arguments: CommandArguments) throws {
         try guardFlockIsInitialized()
         
-        try Builder.update()
+        try Builder.clean()
     }
     
 }
@@ -44,6 +44,20 @@ class PullCommand: FlockCommand {
         try guardFlockIsInitialized()
         
         try Builder.pull()
+    }
+    
+}
+
+
+class UpdateCommand: FlockCommand {
+    let name = "--update"
+    let signature = ""
+    let shortDescription = ""
+    
+    func execute(arguments: CommandArguments) throws {
+        try guardFlockIsInitialized()
+        
+        try Builder.update()
     }
     
 }
