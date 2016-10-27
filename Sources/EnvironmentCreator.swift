@@ -56,8 +56,8 @@ class EnvironmentCreator {
         ]
         let text = lines.joined(separator: "\n")
         
-        try text.write(to: environmentFile)
-        try environmentLink.createLink(pointingTo: Path("..") + fileName)
+        try write(contents: text, to: environmentFile)
+        try createLink(at: environmentLink, pointingTo: Path("..") + fileName, logPath: environmentFile)
     }
     
 }

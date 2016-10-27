@@ -22,10 +22,22 @@ extension Path {
     static let executable = buildDirectory + "debug/flockfile"
 }
 
-extension Path {
-    
-    func createLink(pointingTo path: Path) throws { // Clearer (at least to me)
-        try path.symlinkFile(to: self)
-    }
-    
+func createDirectory(at path: Path) throws {
+    print("Creating \(path.rawValue)".cyan)
+    try path.createDirectory()
+}
+
+func write(contents: String, to path: Path) throws {
+    print("Writing \(path.rawValue)".cyan)
+    try contents.write(to: path)
+}
+
+func createLink(at new: Path, pointingTo existing: Path, logPath: Path) throws {
+    print("Linking \(logPath.rawValue) to \(new.rawValue)".cyan)
+    try existing.symlinkFile(to: new)
+}
+
+func createEnvironment(with creator: EnvironmentCreator) throws {
+    print("Creating \(creator.fileName)".cyan)
+    try creator.create()
 }

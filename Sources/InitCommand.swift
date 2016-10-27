@@ -51,28 +51,6 @@ class InitCommand: FlockCommand {
             throw CLIError.error("deploy/Always.swift, deploy/Production.swift, and deploy/Staging.swift must not already exist".red)
         }
         
-        // Helpers
-        
-        func createDirectory(at path: Path) throws {
-            print("Creating \(path.rawValue)".cyan)
-            try path.createDirectory()
-        }
-        
-        func write(contents: String, to path: Path) throws {
-            print("Writing \(path.rawValue)".cyan)
-            try contents.write(to: path)
-        }
-        
-        func createLink(at new: Path, pointingTo existing: Path) throws {
-            print("Linking \(new.rawValue) to \(existing.rawValue)".cyan)
-            try new.createLink(pointingTo: existing)
-        }
-        
-        func createEnvironment(with creator: EnvironmentCreator) throws {
-            print("Creating \(creator.fileName)".cyan)
-            try creator.create()
-        }
-        
         // Create files
         
         try createDirectory(at: Path.flockDirectory)
@@ -81,7 +59,7 @@ class InitCommand: FlockCommand {
         try write(contents: dependenciesDefault(), to: Path.dependenciesFile)
         
         try write(contents: flockfileDefault(), to: Path.mainFile)
-        try createLink(at: Path.flockfile, pointingTo: Path.mainFile)
+        try createLink(at: Path.flockfile, pointingTo: Path.mainFile, logPath: Path.mainFile)
         
         try createEnvironment(with: alwaysCreator)
         try createEnvironment(with: productionCreator)
