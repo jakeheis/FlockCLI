@@ -134,6 +134,7 @@ class InitCommand: FlockCommand {
       return [
             "import Flock",
             "",
+            "Flock.use(Flock.Tools)",
             "Flock.use(Flock.Deploy)",
             "",
             "Flock.configure(.always, with: Always()) // Located at deploy/Always.swift",
