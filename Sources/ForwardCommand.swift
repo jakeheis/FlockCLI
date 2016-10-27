@@ -1,16 +1,23 @@
+//
+//  ForwardCommand.swift
+//  FlockCLI
+//
+//  Created by Jake Heiser on 10/26/16.
+//
+//
+
 import Foundation
 import SwiftCLI
+import FileKit
 
-class ForwardCommand: Command {
+class ForwardCommand: FlockCommand {
     
     let name = ""
     let signature = "[<optional>] ..."
     let shortDescription = ""
     
     func execute(arguments: CommandArguments) throws {
-        if !FileHelpers.flockIsInitialized() {
-            throw CLIError.error("Flock has not been initialized in this directory yet - run `flock --init`")
-        }
+        try guardFlockIsInitialized()
         
         let result = Builder.build()
         if result == false {
@@ -18,7 +25,7 @@ class ForwardCommand: Command {
         }
         
         let task = Process()
-        task.launchPath = Paths.launchPath
+        task.launchPath = Path.executable.rawValue
         task.arguments = arguments.optionalCollectedArgument("optional") ?? []
         task.launch()
         task.waitUntilExit()

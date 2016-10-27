@@ -1,30 +1,44 @@
-import Foundation
+//
+//  InitCommand.swift
+//  FlockCLI
+//
+//  Created by Jake Heiser on 10/26/16.
+//
+//
+
 import SwiftCLI
 import Rainbow
+import FileKit
 
-class InitCommand: Command {
+class InitCommand: FlockCommand {
   
     let name = "--init"
     let signature = ""
     let shortDescription = ""
     
     func execute(arguments: CommandArguments) throws {
-        if FileHelpers.flockIsInitialized() {
-            throw CLIError.error("Flock has already been initialized")
+        guard !flockIsInitialized else {
+            throw CLIError.error("Flock has already been initialized".red)
         }
         
-        // Ensure required files do not already exist
-        for directory in [Paths.flockDirectory] { 
-            if FileHelpers.directoryExists(directory) {
-                throw CLIError.error("\(directory) must not already exist")
-            }
-        }
-        for file in [Paths.flockfile, Paths.packageFile] { 
-            if FileHelpers.fileExists(file) {
-                throw CLIError.error("\(file) must not already exist")
-            }
-        }
+        try checkExisting()
         
+        try createFiles()
+        
+        build()
+        
+        print("Successfully initialized Flock!".green)
+    }
+    
+    func checkExisting() throws {
+        for path in [Path.flockDirectory, Path.flockfile, Path.packageFile] {
+            if path.exists {
+                throw CLIError.error("\(path) must not already exist".red)
+            }
+        }
+    }
+    
+    func createFiles() throws {
         print("Creating Flock files...".yellow)
         
         let alwaysCreator = EnvironmentCreator(env: "always", defaults: alwaysDefaults())
@@ -32,30 +46,55 @@ class InitCommand: Command {
         let stagingCreator = EnvironmentCreator(env: "staging", defaults: stagingDefaults())
         
         guard alwaysCreator.canCreate && productionCreator.canCreate && stagingCreator.canCreate else {
-            throw CLIError.error("deploy/[always,production,staging].swift and deploy/.flock/[always,production,staging].swift must not already exist")
+            throw CLIError.error("deploy/Always.swift, deploy/Production.swift, and deploy/Staging.swift must not already exist".red)
+        }
+        
+        // Helpers
+        
+        func createDirectory(at path: Path) throws {
+            print("Creating \(path.rawValue)".cyan)
+            try path.createDirectory()
+        }
+        
+        func write(contents: String, to path: Path) throws {
+            print("Writing \(path.rawValue)".cyan)
+            try contents.write(to: path)
+        }
+        
+        func link(source: Path, to destination: Path) throws {
+            print("Linking \(source.rawValue) to \(destination.rawValue)".cyan)
+            try source.symlinkFile(to: destination)
+        }
+        
+        func createEnvironment(with creator: EnvironmentCreator) throws {
+            print("Creating \(creator.fileName)".cyan)
+            try creator.create()
         }
         
         // Create files
-        try FileHelpers.createDirectory(at: Paths.flockDirectory)
         
-        try FileHelpers.createFile(at: Paths.packageFile, contents: packageDefault())
-        try FileHelpers.createFile(at: Paths.dependenciesFile, contents: dependenciesDefault())
+        try createDirectory(at: Path.flockDirectory)
         
-        try FileHelpers.createFile(at: Paths.mainFile, contents: flockfileDefault())
-        try FileHelpers.createSymlink(at: Paths.flockfile, toPath: Paths.mainFile)
+        try write(contents: packageDefault(), to: Path.packageFile)
+        try write(contents: dependenciesDefault(), to: Path.dependenciesFile)
         
-        try alwaysCreator.create()
-        try productionCreator.create()
-        try stagingCreator.create()
+        try write(contents: flockfileDefault(), to: Path.mainFile)
+        try link(source: Path.mainFile, to: Path.flockfile)
+        
+        try createEnvironment(with: alwaysCreator)
+        try createEnvironment(with: productionCreator)
+        try createEnvironment(with: stagingCreator)
         
         print("Successfully created Flock files".green)
-        
+    }
+    
+    func build() {
         print("Downloading and building dependencies...".yellow)
         Builder.build(silent: true)
         print("Successfully downloaded dependencies".green)
-        
-        print("Successfully initialized Flock!".green)
-        
+    }
+    
+    func printInstructions() {
         print()
         print("IN ORDER FOR FLOCK TO WORK CORRECTLY".yellow)
         print("Follow these steps:".yellow)
@@ -153,6 +192,7 @@ class InitCommand: Command {
     }
     
     private func alwaysDefaults() -> [String] {
+        
         return [
             "// Update these values before using Flock:",
             "Config.projectName = nil",
@@ -162,24 +202,6 @@ class InitCommand: Command {
             "// Optional config:",
             "// Config.deployDirectory = \"/var/www\""
         ]
-    }
-  
-    private func inputProjectName() -> String {
-        return Input.awaitInput(message: "Project name (must be same as in Package.swift): ")
-        // guard let text = try? String(contentsOfFile: "Package.swift", encoding: NSUTF8StringEncoding) else {
-        //     print("WARNING: The name of your project could not be found (we looked for a Package.swift). In order to ensure Flock works correctly, make sure you edit deploy/Always.swift to reflect your true project name.".red)
-        //     return nil
-        // }
-        // let lines = text.componentsSeparatedByString("\n")
-        // for line in lines {
-        //     if (line as NSString).stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).hasPrefix("name"),
-        //         let word = line.componentsSeparatedByString(" ").filter({ $0.hasPrefix("\"") }).first {
-        //         let startIndex = line.startIndex.successor()
-        //         // return word.substringWithRange()
-        //         return word
-        //     }
-        // }
-        // return nil
     }
   
 }

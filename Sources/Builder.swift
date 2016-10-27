@@ -1,5 +1,14 @@
+//
+//  Builder.swift
+//  FlockCLI
+//
+//  Created by Jake Heiser on 10/26/16.
+//
+//
+
 import Foundation
 import SwiftCLI
+import FileKit
 
 class Builder {
     
@@ -7,7 +16,7 @@ class Builder {
     static func build(silent: Bool = false) -> Bool {
         let task = Process()
         task.launchPath = "/usr/bin/env"
-        task.currentDirectoryPath = Paths.flockDirectory
+        task.currentDirectoryPath = Path.flockDirectory.rawValue
         task.arguments = ["swift", "build"]
         if silent {
             task.standardOutput = Pipe()
@@ -19,21 +28,27 @@ class Builder {
         return task.terminationStatus == 0
     }
     
-    static func update() throws -> Bool {
-        guard let packagesURL = URL(string: "\(Paths.flockDirectory)/Packages") else {
-            throw CLIError.error("URL error")
+    static func update() throws {
+        try clean(includeDependencies: true)
+        build()
+    }
+    
+    static func clean(includeDependencies: Bool = false) throws {
+        try Path.buildDirectory.deleteFile()
+        
+        if includeDependencies {
+            try Path.packagesDirectory.deleteFile()
         }
-        
+    }
+    
+    @discardableResult
+    static func pull() throws -> Bool {
         var anyUpdated = false
-        
-        let packages = try FileManager.default.contentsOfDirectory(at: packagesURL, includingPropertiesForKeys: nil, options: [])
-        for package in packages {
-            let path = package.path
-          
+        for package in Path.packagesDirectory {
             let task = Process()
             task.launchPath = "/usr/local/bin/git"
             task.arguments = ["pull"]
-            task.currentDirectoryPath = path
+            task.currentDirectoryPath = package.rawValue
             
             let output = Pipe()
             task.standardOutput = output
@@ -50,15 +65,6 @@ class Builder {
         }
         
         return anyUpdated
-    }
-    
-    static func clean() {
-        let task = Process()
-        task.launchPath = "/bin/rm"
-        task.arguments = ["-r", ".build"]
-        task.currentDirectoryPath = Paths.flockDirectory
-        task.launch()
-        task.waitUntilExit()
     }
     
 }

@@ -1,11 +1,23 @@
-struct Paths {
-    static let flockDirectory = "deploy/.flock"
+//
+//  Paths.swift
+//  FlockCLI
+//
+//  Created by Jake Heiser on 10/26/16.
+//
+//
+
+import FileKit
+
+extension Path {
+    static let deployDirectory = Path("deploy")
+    static let flockDirectory = deployDirectory + ".flock"
+    static let packagesDirectory = flockDirectory + "Packages"
+    static let buildDirectory = flockDirectory + ".build"
     
-    static let packageFile = "\(flockDirectory)/Package.swift"
-    static let dependenciesFile = "deploy/FlockDependencies.json"
+    static let packageFile = flockDirectory + "Package.swift"
+    static let dependenciesFile = deployDirectory + "FlockDependencies.json"
+    static let mainFile = flockDirectory + "main.swift"
+    static let flockfile = Path("Flockfile")
     
-    static let mainFile = "\(flockDirectory)/main.swift"
-    static let flockfile = "Flockfile"
-    
-    static let launchPath = "\(flockDirectory)/.build/debug/flockfile"
+    static let executable = buildDirectory + "debug/flockfile"
 }
