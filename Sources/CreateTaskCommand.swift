@@ -41,7 +41,7 @@ class CreateTaskCommand: FlockCommand {
         }
         
         try write(contents: template(for: name, in: namespace), to: path)
-        try createLink(at: Path.flockDirectory + fileName, pointingTo: Path("..") + fileName, logPath: path)
+        try createLink(at: Path.flockDirectory + fileName, pointingTo: ".." + path, logPath: path)
         
         print("What's left to do:".yellow)
         print("1. Replace <NameThisGroup> at the top of your new file with a custom name")

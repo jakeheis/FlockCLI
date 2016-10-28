@@ -57,12 +57,13 @@ class InitCommand: FlockCommand {
         // Create files
         
         try createDirectory(at: Path.flockDirectory)
+        try createDirectory(at: Path.deployDirectory)
         
         try write(contents: packageDefault(), to: Path.packageFile)
         try write(contents: dependenciesDefault(), to: Path.dependenciesFile)
         
         try write(contents: flockfileDefault(), to: Path.flockfile)
-        try createLink(at: Path.mainFile, pointingTo: Path("../..") + Path.flockfile, logPath: Path.flockfile)
+        try createLink(at: Path.mainFile, pointingTo: Path("..") + Path.flockfile, logPath: Path.flockfile)
         
         try createEnvironment(with: alwaysCreator)
         try createEnvironment(with: productionCreator)
@@ -108,10 +109,10 @@ class InitCommand: FlockCommand {
         print("IN ORDER FOR FLOCK TO WORK CORRECTLY".yellow)
         print("Follow these steps:".yellow)
         print("1. Update the required fields in deploy/Always.swift")
-        print("2. Add your production and staging servers to deploy/Production.swift and deploy/Staging.swift respectively")
+        print("2. Add your production and staging servers to \(Path.deployDirectory)/Production.swift and \(Path.deployDirectory)/Staging.swift respectively")
         print()
         print("To add Flock dependencies:".yellow)
-        print("1. Add the url and version of the dependency to deploy/FlockDependencies.json")
+        print("1. Add the url and version of the dependency to \(Path.dependenciesFile)")
         print("2. in your Flockfile, at the top of the file import your dependency and below add `Flock.use(Dependency)`")
     }
     
@@ -128,7 +129,7 @@ class InitCommand: FlockCommand {
             "   name: \"Flockfile\"",
             ")",
             "",
-            "let url = URL(fileURLWithPath: \"../FlockDependencies.json\")",
+            "let url = URL(fileURLWithPath: \"../\(Path.dependenciesFile)\")",
             "if let data = try? Data(contentsOf: url),",
             "    let json = (try? JSONSerialization.jsonObject(with: data, options: [])) as? [String: [[String: Any]]],",
             "    let dependencies = json[\"dependencies\"] {",
