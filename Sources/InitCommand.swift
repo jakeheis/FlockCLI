@@ -80,7 +80,6 @@ class InitCommand: FlockCommand {
         print("Follow these steps:".yellow)
         print("1. Update the required fields in deploy/Always.swift")
         print("2. Add your production and staging servers to deploy/Production.swift and deploy/Staging.swift respectively")
-        print("3. In your project's Package.swift, add `deploy` to the ignore list")
         print()
         print("To add Flock dependencies:".yellow)
         print("1. Add the url and version of the dependency to deploy/FlockDependencies.json")
