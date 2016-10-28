@@ -14,7 +14,7 @@ class CreateTaskCommand: FlockCommand {
     
     let name = "--create"
     let signature = "<name>"
-    let shortDescription = ""
+    let shortDescription = "Creates a task with the given name"
     
     let taskSuffix = "Task"
     

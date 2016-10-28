@@ -15,7 +15,7 @@ class InitCommand: FlockCommand {
   
     let name = "--init"
     let signature = ""
-    let shortDescription = ""
+    let shortDescription = "Initializes Flock in the current directory"
     
     func execute(arguments: CommandArguments) throws {
         guard !flockIsInitialized else {

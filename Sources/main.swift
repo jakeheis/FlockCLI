@@ -1,9 +1,11 @@
 import Darwin
 import SwiftCLI
 
-CLI.setup(name: "flock")
+CLI.setup(name: "flock", version: "0.0.1")
 
 CLI.router = DefaultRouter(fallbackCommand: ForwardCommand())
+CLI.versionCommand = VersionCommand()
+CLI.helpCommand = HelpCommand()
 
 CLI.register(command: InitCommand())
 CLI.register(command: BuildCommand())
@@ -13,8 +15,7 @@ CLI.register(command: CleanCommand())
 CLI.register(command: AddEnvironmentCommand())
 CLI.register(command: CreateTaskCommand())
 
-CLI.alias(from: "-h", to: "")
-CLI.alias(from: "help", to: "")
-CLI.alias(from: "version", to: "")
+CLI.alias(from: "-h", to: "--help")
+CLI.alias(from: "-v", to: "--version")
 
 exit(CLI.go())
