@@ -34,9 +34,11 @@ class Builder {
     }
     
     static func clean(includeDependencies: Bool = false) throws {
-        try Path.buildDirectory.deleteFile()
+        if Path.buildDirectory.exists {
+            try Path.buildDirectory.deleteFile()
+        }
         
-        if includeDependencies {
+        if includeDependencies && Path.packagesDirectory.exists {
             try Path.packagesDirectory.deleteFile()
         }
     }

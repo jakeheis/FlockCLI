@@ -25,12 +25,25 @@ class BuildCommand: FlockCommand {
 class CleanCommand: FlockCommand {
     let name = "--clean"
     let signature = ""
-    let shortDescription = "Cleans Flock in the current directory"
+    let shortDescription = "Cleans Flock's build directory in the current project"
     
     func execute(arguments: CommandArguments) throws {
         try guardFlockIsInitialized()
         
         try Builder.clean()
+    }
+    
+}
+
+class CleanAllCommand: FlockCommand {
+    let name = "--clean-all"
+    let signature = ""
+    let shortDescription = "Cleans Flock's build directory and Packages directory in the current project"
+    
+    func execute(arguments: CommandArguments) throws {
+        try guardFlockIsInitialized()
+        
+        try Builder.clean(includeDependencies: true)
     }
     
 }
