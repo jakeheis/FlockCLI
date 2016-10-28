@@ -61,8 +61,8 @@ class InitCommand: FlockCommand {
         try write(contents: packageDefault(), to: Path.packageFile)
         try write(contents: dependenciesDefault(), to: Path.dependenciesFile)
         
-        try write(contents: flockfileDefault(), to: Path.mainFile)
-        try createLink(at: Path.flockfile, pointingTo: Path.mainFile, logPath: Path.mainFile)
+        try write(contents: flockfileDefault(), to: Path.flockfile)
+        try createLink(at: Path.mainFile, pointingTo: Path("../..") + Path.flockfile, logPath: Path.flockfile)
         
         try createEnvironment(with: alwaysCreator)
         try createEnvironment(with: productionCreator)
