@@ -166,9 +166,9 @@ class InitCommand: FlockCommand {
             "Flock.use(Flock.Tools)",
             "Flock.use(Flock.Deploy)",
             "",
-            "Flock.configure(.always, with: Always()) // Located at deploy/Always.swift",
-            "Flock.configure(.env(\"production\"), with: Production()) // Located at deploy/Production.swift",
-            "Flock.configure(.env(\"staging\"), with: Staging()) // Located at deploy/Staging.swift",
+            "Flock.configure(.always, with: Always()) // Located at \(Path.deployDirectory)/Always.swift",
+            "Flock.configure(.env(\"production\"), with: Production()) // Located at \(Path.deployDirectory)/Production.swift",
+            "Flock.configure(.env(\"staging\"), with: Staging()) // Located at \(Path.deployDirectory)/Staging.swift",
             "",
             "Flock.run()",
             ""
@@ -180,7 +180,7 @@ class InitCommand: FlockCommand {
             "{",
             "   \"dependencies\" : [",
             "       {",
-            "           \"url\" : \"/Users/jakeheiser/Documents/Swift/Flock\",",
+            "           \"url\" : \"https://github.com/jakeheis/Flock\",",
             "           \"version\": \"0.0.1\"",
             "       }",
             "   ]",
@@ -191,7 +191,8 @@ class InitCommand: FlockCommand {
     
     private func productionDefaults() -> [String] {
       return [
-            "// Servers.add(SSHHost: \"ProductionServer\", roles: [.app, .db, .web])"
+            "// Config.SSHAuthMethod = .key(\"/path/to/mykey\")",
+            "// Servers.add(ip: \"9.9.9.9\", user: \"user\", roles: [.app, .db, .web])"
       ]
     }
     
