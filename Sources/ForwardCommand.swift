@@ -6,6 +6,12 @@
 //
 //
 
+#if os(Linux)
+    import Glibc
+#else
+    import Darwin
+#endif
+
 import Foundation
 import SwiftCLI
 import FileKit
@@ -28,11 +34,7 @@ class ForwardCommand: FlockCommand {
             }
         }
         
-        let task = Process()
-        task.launchPath = Path.executable.rawValue
-        task.arguments = args
-        task.launch()
-        task.waitUntilExit()
+        execv(Path.executable.rawValue, CommandLine.unsafeArgv)
     }
     
 }
