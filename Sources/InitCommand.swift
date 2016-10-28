@@ -108,7 +108,7 @@ class InitCommand: FlockCommand {
         print()
         print("IN ORDER FOR FLOCK TO WORK CORRECTLY".yellow)
         print("Follow these steps:".yellow)
-        print("1. Update the required fields in deploy/Always.swift")
+        print("1. Update the required fields in \(Path.deployDirectory)/Always.swift")
         print("2. Add your production and staging servers to \(Path.deployDirectory)/Production.swift and \(Path.deployDirectory)/Staging.swift respectively")
         print()
         print("To add Flock dependencies:".yellow)
