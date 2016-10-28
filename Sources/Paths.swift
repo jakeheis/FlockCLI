@@ -38,6 +38,6 @@ func createLink(at new: Path, pointingTo existing: Path, logPath: Path) throws {
 }
 
 func createEnvironment(with creator: EnvironmentCreator) throws {
-    print("Creating \(creator.fileName)".cyan)
+    print("Creating environment `\(creator.env)`".cyan)
     try creator.create()
 }
