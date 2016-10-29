@@ -205,9 +205,9 @@ class InitCommand: FlockCommand {
     private func alwaysDefaults() -> [String] {
         
         return [
-            "// Update these values before using Flock:",
+            "// UPDATE THESE VALUES BEFORE USING FLOCK:",
             "Config.projectName = nil",
-            "Config.executableName = nil",
+            "Config.executableName = nil // Same as Config.projectName unless your project is divided into modules",
             "Config.repoURL = nil",
             "",
             "// Optional config:",
