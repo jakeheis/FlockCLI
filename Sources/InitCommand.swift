@@ -212,7 +212,7 @@ class InitCommand: FlockCommand {
             "",
             "// Optional config:",
             "// Config.deployDirectory = \"/var/www\"",
-            "// Config.swiftVersion = nil"
+            "// Config.swiftVersion = \"https://swift.org/builds/swift-3.0-release/ubuntu1510/swift-3.0-RELEASE/swift-3.0-RELEASE-ubuntu15.10.tar.gz\""
         ]
     }
   
