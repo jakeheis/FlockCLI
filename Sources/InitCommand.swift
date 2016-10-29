@@ -211,7 +211,8 @@ class InitCommand: FlockCommand {
             "Config.repoURL = nil",
             "",
             "// Optional config:",
-            "// Config.deployDirectory = \"/var/www\""
+            "// Config.deployDirectory = \"/var/www\"",
+            "// Config.swiftVersion = nil"
         ]
     }
   
