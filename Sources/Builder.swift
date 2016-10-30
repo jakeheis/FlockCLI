@@ -6,15 +6,18 @@
 //
 //
 
-import Foundation
 import SwiftCLI
 import FileKit
+import Spawn
+import Foundation
 
 class Builder {
     
+    private static var buildProcess: Process?
+    
     @discardableResult
     static func build(silent: Bool = false) -> Bool {
-        let task = Process()
+        let task = Process() // TODO: Spawn doesn't work here for some reason, fall back to using Process
         task.launchPath = "/usr/bin/env"
         task.currentDirectoryPath = Path.flockDirectory.rawValue
         task.arguments = ["swift", "build"]
@@ -23,7 +26,20 @@ class Builder {
             task.standardError = Pipe()
         }
         task.launch()
+        
+        buildProcess = task
+        
+        signal(SIGINT) { (val) in
+            Builder.interruptBuild()
+            
+            // After interrupting build, interrupt this process
+            signal(SIGINT, SIG_DFL)
+            raise(SIGINT)
+        }
+        
         task.waitUntilExit()
+        
+        signal(SIGINT, SIG_DFL)
         
         return task.terminationStatus == 0
     }
@@ -43,30 +59,25 @@ class Builder {
         }
     }
     
-    @discardableResult
-    static func pull() throws -> Bool {
-        var anyUpdated = false
-        for package in Path.packagesDirectory.children() {
-            let task = Process()
-            task.launchPath = "/usr/local/bin/git"
-            task.arguments = ["pull"]
-            task.currentDirectoryPath = package.rawValue
-            
-            let output = Pipe()
-            task.standardOutput = output
-            
-            task.launch()
-            task.waitUntilExit()
-            
-            let data = output.fileHandleForReading.readDataToEndOfFile()
-            let string = String(data: data, encoding: .utf8)
-            
-            if let string = string, !string.hasPrefix("Already up-to-date") {
-                anyUpdated = true
-            }
+    static func pull() throws {
+        let outputHandler: (String) -> () = { (chunk) in
+            print(chunk, terminator: "")
         }
         
-        return anyUpdated
+        for package in Path.packagesDirectory.children() {
+            let pullProcess = try Spawn(args: ["/usr/bin/env", "git", "-C", package.rawValue, "pull"], output: outputHandler)
+            
+            let status = pullProcess.waitForExit()
+            if status != 0 {
+                throw CLIError.error("Git pull failed for package \(package)")
+            }
+        }
+    }
+    
+    // MARK: - Private
+    
+    private static func interruptBuild() {
+        buildProcess?.interrupt()
     }
     
 }
