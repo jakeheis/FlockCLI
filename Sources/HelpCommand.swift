@@ -29,7 +29,11 @@ class HelpCommand: SwiftCLI.HelpCommand, FlockCommand {
         print("Available commands: ")
         
         for command in allCommands {
-            printLine(name: command.name, description: command.shortDescription)
+            var name = command.name
+            if !command.signature.isEmpty && !(command is HelpCommand) {
+                name += " \(command.signature)"
+            }
+            printLine(name: name, description: command.shortDescription)
         }
         
         printLine(name: "<task>", description: "Execute the given task")
