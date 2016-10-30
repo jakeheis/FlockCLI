@@ -3,7 +3,7 @@ import SwiftCLI
 
 CLI.setup(name: "flock", version: "0.0.1")
 
-CLI.router = DefaultRouter(fallbackCommand: ForwardCommand())
+CLI.router = FlockRouter()
 CLI.versionCommand = VersionCommand()
 CLI.helpCommand = HelpCommand()
 
