@@ -165,6 +165,7 @@ class InitCommand: FlockCommand {
             "",
             "Flock.use(Flock.Tools)",
             "Flock.use(Flock.Deploy)",
+            "Flock.use(Flock.Server)",
             "",
             "Flock.configure(.always, with: Always()) // Located at \(Path.deployDirectory)/Always.swift",
             "Flock.configure(.env(\"production\"), with: Production()) // Located at \(Path.deployDirectory)/Production.swift",
