@@ -182,7 +182,7 @@ class InitCommand: FlockCommand {
             "   \"dependencies\" : [",
             "       {",
             "           \"url\" : \"https://github.com/jakeheis/Flock\",",
-            "           \"version\": \"0.0.1\"",
+            "           \"major\": 0",
             "       }",
             "   ]",
             "}",
