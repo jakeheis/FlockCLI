@@ -6,10 +6,10 @@
 //
 //
 
+import Foundation
 import SwiftCLI
 import Rainbow
-import FileKit
-import Foundation
+import PathKit
 
 class InitCommand: FlockCommand {
   
@@ -84,21 +84,22 @@ class InitCommand: FlockCommand {
         let appendText = [
             "",
             "# Flock",
-            Path.buildDirectory.rawValue,
-            Path.packagesDirectory.rawValue,
+            Path.buildDirectory.description,
+            Path.packagesDirectory.description,
             ""
         ].joined(separator: "\n")
         
         let gitIgnorePath = Path(".gitignore")
         
         if gitIgnorePath.exists {
-            guard let gitIgnore = OutputStream(toFileAtPath: gitIgnorePath.rawValue, append: true) else {
+            guard let gitIgnore = OutputStream(toFileAtPath: gitIgnorePath.description, append: true) else {
                 throw CLIError.error("Couldn't open .gitignore stream")
             }
             gitIgnore.open()
             gitIgnore.write(appendText, maxLength: appendText.characters.count)
+            gitIgnore.close()
         } else {
-            try appendText.write(to: gitIgnorePath)
+            try gitIgnorePath.write(appendText)
         }
         
         print("Successfully added Flock files to .gitignore".green)

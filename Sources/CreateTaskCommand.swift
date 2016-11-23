@@ -7,8 +7,8 @@
 //
 
 import SwiftCLI
-import FileKit
 import Rainbow
+import PathKit
 
 class CreateTaskCommand: FlockCommand {
     

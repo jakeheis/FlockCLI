@@ -7,7 +7,7 @@
 //
 
 import SwiftCLI
-import FileKit
+import PathKit
 
 class EnvironmentCreator {
     

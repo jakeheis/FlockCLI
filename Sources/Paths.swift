@@ -6,7 +6,7 @@
 //
 //
 
-import FileKit
+import PathKit
 
 extension Path {
     static let deployDirectory = Path("config/deploy")
@@ -23,18 +23,18 @@ extension Path {
 }
 
 func createDirectory(at path: Path) throws {
-    print("Creating \(path.rawValue)".cyan)
-    try path.createDirectory()
+    print("Creating \(path)".cyan)
+    try path.mkpath()
 }
 
 func write(contents: String, to path: Path) throws {
-    print("Writing \(path.rawValue)".cyan)
-    try contents.write(to: path)
+    print("Writing \(path)".cyan)
+    try path.write(contents)
 }
 
 func createLink(at new: Path, pointingTo existing: Path, logPath: Path) throws {
-    print("Linking \(logPath.rawValue) to \(new.rawValue)".cyan)
-    try existing.symlinkFile(to: new)
+    print("Linking \(logPath) to \(new)".cyan)
+    try new.symlink(existing)
 }
 
 func createEnvironment(with creator: EnvironmentCreator) throws {

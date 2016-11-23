@@ -7,7 +7,6 @@
 //
 
 import SwiftCLI
-import FileKit
 import Rainbow
 
 class AddEnvironmentCommand: Command {

@@ -14,7 +14,7 @@
 
 import Foundation
 import SwiftCLI
-import FileKit
+import PathKit
 
 class ForwardCommand: FlockCommand {
     
@@ -34,7 +34,7 @@ class ForwardCommand: FlockCommand {
             }
         }
         
-        execv(Path.executable.rawValue, CommandLine.unsafeArgv)
+        execv(Path.executable.description, CommandLine.unsafeArgv)
     }
     
 }

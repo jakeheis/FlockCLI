@@ -6,10 +6,10 @@
 //
 //
 
-import SwiftCLI
-import FileKit
-import Spawn
 import Foundation
+import SwiftCLI
+import Spawn
+import PathKit
 
 class Builder {
     
@@ -19,7 +19,7 @@ class Builder {
     static func build(silent: Bool = false) -> Bool {
         let task = Process() // TODO: Spawn doesn't work here for some reason, fall back to using Process
         task.launchPath = "/usr/bin/env"
-        task.currentDirectoryPath = Path.flockDirectory.rawValue
+        task.currentDirectoryPath = Path.flockDirectory.description
         task.arguments = ["swift", "build"]
         if silent {
             task.standardOutput = Pipe()
@@ -51,11 +51,11 @@ class Builder {
     
     static func clean(includeDependencies: Bool = false) throws {
         if Path.buildDirectory.exists {
-            try Path.buildDirectory.deleteFile()
+            try Path.buildDirectory.delete()
         }
         
         if includeDependencies && Path.packagesDirectory.exists {
-            try Path.packagesDirectory.deleteFile()
+            try Path.packagesDirectory.delete()
         }
     }
     
@@ -64,8 +64,8 @@ class Builder {
             print(chunk, terminator: "")
         }
         
-        for package in Path.packagesDirectory.children() {
-            let pullProcess = try Spawn(args: ["/usr/bin/env", "git", "-C", package.rawValue, "pull"], output: outputHandler)
+        for package in try Path.packagesDirectory.children() {
+            let pullProcess = try Spawn(args: ["/usr/bin/env", "git", "-C", package.description, "pull"], output: outputHandler)
             
             let status = pullProcess.waitForExit()
             if status != 0 {

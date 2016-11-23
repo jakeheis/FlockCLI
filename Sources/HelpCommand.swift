@@ -8,7 +8,7 @@
 
 import SwiftCLI
 import Spawn
-import FileKit
+import PathKit
 
 class HelpCommand: SwiftCLI.HelpCommand, FlockCommand {
     
@@ -43,7 +43,7 @@ class HelpCommand: SwiftCLI.HelpCommand, FlockCommand {
             
             if Path.executable.exists {
                 // Forward to help command of local cli
-                let spawn = try Spawn(args: [Path.executable.rawValue, "--help"]) { (chunk) in
+                let spawn = try Spawn(args: [Path.executable.description, "--help"]) { (chunk) in
                     print(chunk, terminator: "")
                 }
                 _ = spawn.waitForExit()
