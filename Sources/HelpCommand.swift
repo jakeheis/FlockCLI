@@ -21,14 +21,14 @@ class HelpCommand: SwiftCLI.HelpCommand, FlockCommand {
     let helpOnHFlag = false
     
     var printCLIDescription: Bool = true
-    var allCommands: [Command] = []
+    var availableCommands: [Command] = []
     
     func setupOptions(options: OptionRegistry) {}
     
     func execute(arguments: CommandArguments) throws {
         print("Available commands: ")
         
-        for command in allCommands {
+        for command in availableCommands {
             var name = command.name
             if !command.signature.isEmpty && !(command is HelpCommand) {
                 name += " \(command.signature)"
