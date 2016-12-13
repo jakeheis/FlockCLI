@@ -23,21 +23,30 @@ extension Path {
 }
 
 func createDirectory(at path: Path) throws {
-    print("Creating \(path)".cyan)
+    log(action: "create", description: path.description)
     try path.mkpath()
 }
 
 func write(contents: String, to path: Path) throws {
-    print("Writing \(path)".cyan)
+    log(action: "write", description: path.description)
     try path.write(contents)
 }
 
 func createLink(at new: Path, pointingTo existing: Path, logPath: Path) throws {
-    print("Linking \(logPath) to \(new)".cyan)
+    log(action: "link", description: "\(logPath.description) -> \(new.description)")
     try new.symlink(existing)
 }
 
 func createEnvironment(with creator: EnvironmentCreator) throws {
-    print("Creating environment `\(creator.env)`".cyan)
+    log(action: "env", description: creator.env)
     try creator.create()
+}
+
+private func log(action: String, description: String) {
+    var paddedAction =  ""
+    for _ in 0..<(12 - action.characters.count) {
+        paddedAction.append(" ")
+    }
+    paddedAction.append(action)
+    print("\(paddedAction.magenta)   \(description)")
 }
