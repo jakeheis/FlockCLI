@@ -44,13 +44,13 @@ class EnvironmentCreator {
             "import Flock",
             "",
             "class \(env.capitalized): Configuration {",
-            "    func configure() {"
+            "\tfunc configure() {"
         ]
         if let defaults = defaults {
             lines += defaults.map { "\t\t\($0)" }
         }
         lines += [
-            "    }",
+            "\t}",
             "}",
             ""
         ]

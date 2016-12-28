@@ -212,6 +212,11 @@ class InitCommand: FlockCommand {
             "Config.executableName = nil // Same as Config.projectName unless your project is divided into modules",
             "Config.repoURL = nil",
             "",
+            "// IF YOU PLAN TO RUN `flock tools` AS THE ROOT USER BUT `flock deploy` AS A DEDICATED DEPLOY USER,",
+            "// (as you should, see https://github.com/jakeheis/Flock/blob/master/README.md#permissions)",
+            "// SET THIS VARIABLE TO THE NAME OF YOUR DEPLOY USER BEFORE RUNNING `flock tools`:",
+            "// Config.supervisordUser = \"deploy:deploy\"",
+            "",
             "// Optional config:",
             "// Config.deployDirectory = \"/var/www\"",
             "// Config.swiftVersion = \"https://swift.org/builds/swift-3.0-release/ubuntu1510/swift-3.0-RELEASE/swift-3.0-RELEASE-ubuntu15.10.tar.gz\""
