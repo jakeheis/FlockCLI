@@ -163,9 +163,11 @@ class InitCommand: FlockCommand {
     private func flockfileDefault() -> String {
       return [
             "import Flock",
+            "import SwiftenvFlock",
             "",
             "Flock.use(Flock.Tools)",
             "Flock.use(Flock.Deploy)",
+            "Flock.use(Flock.Swiftenv)",
             "Flock.use(Flock.Server)",
             "",
             "Flock.configure(.always, with: Always()) // Located at \(Path.deployDirectory)/Always.swift",
@@ -183,6 +185,10 @@ class InitCommand: FlockCommand {
             "   \"dependencies\" : [",
             "       {",
             "           \"url\" : \"https://github.com/jakeheis/Flock\",",
+            "           \"major\": 0",
+            "       },",
+            "       {",
+            "           \"url\" : \"https://github.com/jakeheis/SwiftenvFlock\",",
             "           \"major\": 0",
             "       }",
             "   ]",
@@ -214,12 +220,12 @@ class InitCommand: FlockCommand {
             "",
             "// IF YOU PLAN TO RUN `flock tools` AS THE ROOT USER BUT `flock deploy` AS A DEDICATED DEPLOY USER,",
             "// (as you should, see https://github.com/jakeheis/Flock/blob/master/README.md#permissions)",
-            "// SET THIS VARIABLE TO THE NAME OF YOUR DEPLOY USER BEFORE RUNNING `flock tools`:",
+            "// SET THIS VARIABLE TO THE NAME OF YOUR (ALREADY CREATED) DEPLOY USER BEFORE RUNNING `flock tools`:",
             "// Config.supervisordUser = \"deploy:deploy\"",
             "",
             "// Optional config:",
             "// Config.deployDirectory = \"/var/www\"",
-            "// Config.swiftVersion = \"https://swift.org/builds/swift-3.0-release/ubuntu1510/swift-3.0-RELEASE/swift-3.0-RELEASE-ubuntu15.10.tar.gz\""
+            "// Config.swiftVersion = \"3.0.2\" // If you have a `.swift-version` file, this line is not necessary"
         ]
     }
   

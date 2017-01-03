@@ -17,7 +17,7 @@ class Builder {
     
     @discardableResult
     static func build(silent: Bool = false) -> Bool {
-        let task = Process() // TODO: Spawn doesn't work here for some reason, fall back to using Process
+        let task = Process()
         task.launchPath = "/usr/bin/env"
         task.currentDirectoryPath = Path.flockDirectory.description
         task.arguments = ["swift", "build"]
