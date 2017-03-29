@@ -10,6 +10,7 @@ import Foundation
 import SwiftCLI
 import Spawn
 import PathKit
+import Rainbow
 
 class Builder {
     
@@ -17,6 +18,17 @@ class Builder {
     
     @discardableResult
     static func build(silent: Bool = false) -> Bool {
+        if let dependenciesModification = (try? FileManager.default.attributesOfItem(atPath: Path.dependenciesFile.description))?[FileAttributeKey.modificationDate] as? Date,
+            let lastBuilt = (try? FileManager.default.attributesOfItem(atPath: Path.packagesDirectory.description))?[FileAttributeKey.modificationDate] as? Date,
+            dependenciesModification > lastBuilt {
+            do {
+                print("FlockDependencies.json changed -- rebuilding dependencies".yellow)
+                try clean(includeDependencies: true)
+            } catch {
+                return false
+            }
+        }
+        
         let task = Process()
         task.launchPath = "/usr/bin/env"
         task.currentDirectoryPath = Path.flockDirectory.description
