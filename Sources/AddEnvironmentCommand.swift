@@ -12,13 +12,12 @@ import Rainbow
 class AddEnvironmentCommand: Command {
     
     let name = "--add-env"
-    let signature = "<env>"
     let shortDescription = "Adds an environment"
     
-    func execute(arguments: CommandArguments) throws {
-        let environment = arguments.requiredArgument("env")
-        
-        let creator = EnvironmentCreator(env: environment)
+    let env = Parameter()
+    
+    func execute() throws {
+        let creator = EnvironmentCreator(env: env.value)
         try creator.create()
     }
     

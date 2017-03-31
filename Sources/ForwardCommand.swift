@@ -19,19 +19,16 @@ import PathKit
 class ForwardCommand: FlockCommand {
     
     let name = ""
-    let signature = "[<optional>] ..."
     let shortDescription = ""
     
-    func execute(arguments: CommandArguments) throws {
+    let optional = OptionalCollectedParameter()
+    
+    func execute() throws {
         try guardFlockIsInitialized()
         
-        let args = arguments.optionalCollectedArgument("optional") ?? []
-        
-        if !args.isEmpty { // If args present, we're running a task, so build first
-            let result = Builder.build()
-            if result == false {
-                throw CLIError.error("Error: Flock must be successfully built before tasks can be run".red)
-            }
+        let result = Builder.build()
+        if result == false {
+            throw CLIError.error("Error: Flock must be successfully built before tasks can be run".red)
         }
         
         execv(Path.executable.description, CommandLine.unsafeArgv)

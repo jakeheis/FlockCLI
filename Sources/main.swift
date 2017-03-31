@@ -16,7 +16,7 @@ CLI.register(command: CleanAllCommand())
 CLI.register(command: AddEnvironmentCommand())
 CLI.register(command: CreateTaskCommand())
 
-CLI.alias(from: "-h", to: "--help")
-CLI.alias(from: "-v", to: "--version")
+CommandAliaser.alias(from: "-h", to: "--help")
+CommandAliaser.alias(from: "-v", to: "--version")
 
 exit(CLI.go())

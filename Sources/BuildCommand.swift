@@ -11,10 +11,9 @@ import SwiftCLI
 class BuildCommand: FlockCommand {
     
     let name = "--build"
-    let signature = ""
     let shortDescription = "Builds Flock in the current directory"
     
-    func execute(arguments: CommandArguments) throws {
+    func execute() throws {
         try guardFlockIsInitialized()
         
         Builder.build()
@@ -24,10 +23,9 @@ class BuildCommand: FlockCommand {
 
 class CleanCommand: FlockCommand {
     let name = "--clean"
-    let signature = ""
     let shortDescription = "Cleans Flock's build directory"
     
-    func execute(arguments: CommandArguments) throws {
+    func execute() throws {
         try guardFlockIsInitialized()
         
         try Builder.clean()
@@ -37,10 +35,9 @@ class CleanCommand: FlockCommand {
 
 class CleanAllCommand: FlockCommand {
     let name = "--clean-all"
-    let signature = ""
     let shortDescription = "Cleans Flock's build directory and Packages directory"
     
-    func execute(arguments: CommandArguments) throws {
+    func execute() throws {
         try guardFlockIsInitialized()
         
         try Builder.clean(includeDependencies: true)
@@ -50,10 +47,9 @@ class CleanAllCommand: FlockCommand {
 
 class PullCommand: FlockCommand {
     let name = "--pull"
-    let signature = ""
     let shortDescription = "Debug only; use --update instead"
     
-    func execute(arguments: CommandArguments) throws {
+    func execute() throws {
         try guardFlockIsInitialized()
         
         try Builder.pull()
@@ -64,10 +60,9 @@ class PullCommand: FlockCommand {
 
 class UpdateCommand: FlockCommand {
     let name = "--update"
-    let signature = ""
     let shortDescription = "Updates Flock's dependencies in the current project"
     
-    func execute(arguments: CommandArguments) throws {
+    func execute() throws {
         try guardFlockIsInitialized()
         
         try Builder.update()

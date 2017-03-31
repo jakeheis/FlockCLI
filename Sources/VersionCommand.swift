@@ -11,10 +11,9 @@ import SwiftCLI
 class VersionCommand: Command {
     
     let name = "--version"
-    let signature = ""
     let shortDescription = "Prints the current version of Flock"
     
-    func execute(arguments: CommandArguments) throws {
+    func execute() throws {
         print("Version: \(CLI.version)")
     }
     

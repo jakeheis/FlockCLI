@@ -10,22 +10,24 @@ import SwiftCLI
 
 class FlockRouter: Router {
     
-    func route(commands: [Command], aliases: [String : String], arguments: RawArguments) -> Command? {
-        guard let name = arguments.unclassifiedArguments.first else {
-            return CLI.helpCommand
-        }
-        
-        let searchName = aliases[name.value] ?? name.value
-        
-        if let command = commands.first(where: { $0.name == searchName }) {
-            name.classification = .commandName
-            return command
-        }
-        
-        if searchName.hasPrefix("-") {
+    func route(commands: [Command], arguments: ArgumentList) -> Command? {
+        // Just ran `flock`
+        guard let name = arguments.head else {
             return nil
         }
         
+        // Ran something like `flock --init`
+        if let command = commands.first(where: { $0.name == name.value }) {
+            arguments.remove(node: name)
+            return command
+        }
+        
+        // Ran something like `flock --notreal`
+        if name.value.hasPrefix("-") {
+            return nil
+        }
+        
+        // Ran something like `flock deploy`
         return ForwardCommand()
     }
     

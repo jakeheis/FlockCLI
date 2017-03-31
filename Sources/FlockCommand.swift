@@ -8,6 +8,7 @@
 
 import SwiftCLI
 import PathKit
+import Rainbow
 
 protocol FlockCommand: Command {}
 
@@ -19,7 +20,7 @@ extension FlockCommand {
     
     func guardFlockIsInitialized() throws {
         if !flockIsInitialized {
-            throw CLIError.error("Flock has not been initialized in this directory yet - run `flock --init`")
+            throw CLIError.error("Flock has not been initialized in this directory yet - run `flock --init`".red)
         }
     }
     

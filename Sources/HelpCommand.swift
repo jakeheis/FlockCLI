@@ -13,24 +13,17 @@ import PathKit
 class HelpCommand: SwiftCLI.HelpCommand, FlockCommand {
     
     let name = "--help"
-    let signature = "[<opt>] ..."
     let shortDescription = "Prints help information"
-    
-    let failOnUnrecognizedOptions = false
-    let unrecognizedOptionsPrintingBehavior = UnrecognizedOptionsPrintingBehavior.printNone
-    let helpOnHFlag = false
     
     var printCLIDescription: Bool = true
     var availableCommands: [Command] = []
-    
-    func setupOptions(options: OptionRegistry) {}
-    
-    func execute(arguments: CommandArguments) throws {
+        
+    func execute() throws {
         print("Available commands: ")
         
         for command in availableCommands {
             var name = command.name
-            if !command.signature.isEmpty && !(command is HelpCommand) {
+            if !command.signature.isEmpty {
                 name += " \(command.signature)"
             }
             printLine(name: name, description: command.shortDescription)

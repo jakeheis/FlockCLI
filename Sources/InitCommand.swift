@@ -14,10 +14,9 @@ import PathKit
 class InitCommand: FlockCommand {
   
     let name = "--init"
-    let signature = ""
     let shortDescription = "Initializes Flock in the current directory"
     
-    func execute(arguments: CommandArguments) throws {
+    func execute() throws {
         guard !flockIsInitialized else {
             throw CLIError.error("Flock has already been initialized".red)
         }

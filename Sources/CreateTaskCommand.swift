@@ -13,13 +13,14 @@ import PathKit
 class CreateTaskCommand: FlockCommand {
     
     let name = "--create"
-    let signature = "<name>"
     let shortDescription = "Creates a task with the given name"
+    
+    let taskName = Parameter()
     
     let taskSuffix = "Task"
     
-    public func execute(arguments: CommandArguments) throws {
-        var name = arguments.requiredArgument("name")
+    public func execute() throws {
+        var name = taskName.value
         if name.hasSuffix(taskSuffix) {
             name = name.substring(to: name.index(name.endIndex, offsetBy: taskSuffix.characters.count))
         }
