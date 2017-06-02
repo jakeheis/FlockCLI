@@ -17,7 +17,7 @@ extension Path {
     static let packageFile = flockDirectory + "Package.swift"
     static let dependenciesFile = deployDirectory + "FlockDependencies.json"
     static let mainFile = flockDirectory + "main.swift"
-    static let flockfile = Path("Flockfile")
+    static let flockfile = Path("Flockfile.swift")
     
     static let executable = buildDirectory + "debug/flockfile"
 }
