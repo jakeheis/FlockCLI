@@ -31,16 +31,35 @@ class SPM {
     }
     
     static func update() throws {
-        try executeSPM(arguments: ["package", "update"], silent: false)
+        try executeSPM(arguments: ["package", "update"])
         try build()
     }
     
     static func clean() throws {
-        try executeSPM(arguments: ["package", "clean"], silent: false)
+        try executeSPM(arguments: ["package", "clean"])
     }
     
     static func reset() throws {
-        try executeSPM(arguments: ["package", "reset"], silent: false)
+        try executeSPM(arguments: ["package", "reset"])
+    }
+    
+    static func dump() throws -> [String: Any] {
+        guard let output = try executeSPM(arguments: ["package", "dump-package"], silent: true, inFlock: false),
+            let json = try? JSONSerialization.jsonObject(with: output, options: []),
+            let dict = json as? [String: Any] else {
+            throw Error.processFailed
+        }
+        
+        return dict
+    }
+    
+    static func describe() throws -> String {
+        guard let outputData = try executeSPM(arguments: ["package", "describe"], silent: true, inFlock: false),
+            let output = String(data: outputData, encoding: .utf8) else {
+            throw Error.processFailed
+        }
+        
+        return output
     }
     
     static func pull() throws {
@@ -62,10 +81,13 @@ class SPM {
     
     private static var buildProcess: Process?
     
-    private static func executeSPM(arguments: [String], silent: Bool) throws {
+    @discardableResult
+    private static func executeSPM(arguments: [String], silent: Bool = false, inFlock: Bool = true) throws -> Data? {
         let task = Process()
         task.launchPath = "/usr/bin/env"
-        task.currentDirectoryPath = Path.flockDirectory.description
+        if inFlock {
+            task.currentDirectoryPath = Path.flockDirectory.description
+        }
         task.arguments = ["swift"] + arguments
         if silent {
             task.standardOutput = Pipe()
@@ -90,6 +112,13 @@ class SPM {
         guard task.terminationStatus == 0 else {
             throw Error.processFailed
         }
+        
+        if silent {
+            let pipe = task.standardOutput as! Pipe
+            return pipe.fileHandleForReading.readDataToEndOfFile()
+        }
+        
+        return nil
     }
     
     private static func interruptBuild() {

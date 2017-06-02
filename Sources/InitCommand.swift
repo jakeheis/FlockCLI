@@ -10,11 +10,14 @@ import Foundation
 import SwiftCLI
 import Rainbow
 import PathKit
+import Spawn
 
 class InitCommand: FlockCommand {
   
     let name = "--init"
     let shortDescription = "Initializes Flock in the current directory"
+    
+    var configNeedsInfo = false
     
     func execute() throws {
         guard !flockIsInitialized else {
@@ -73,7 +76,10 @@ class InitCommand: FlockCommand {
     
     func build() throws {
         print("Downloading and building dependencies...".yellow)
-        try SPM.build(silent: true)
+        // Only doing this to build dependencies; actual build will fail
+        do {
+            try SPM.build(silent: true)
+        } catch {}
         print("Successfully downloaded dependencies".green)
     }
     
@@ -106,15 +112,13 @@ class InitCommand: FlockCommand {
     
     func printInstructions() {
         print()
-        print("IN ORDER FOR FLOCK TO WORK CORRECTLY".yellow)
-        print("Follow these steps:".yellow)
+        print("Follow these steps to finish setting up Flock:".cyan)
         print("1. Add `exclude: [\"Flockfile.swift\"]` to the end of your Package.swift")
-        print("2. Update the required fields in \(Path.deployDirectory)/Always.swift")
-        print("3. Add your production and staging servers to \(Path.deployDirectory)/Production.swift and \(Path.deployDirectory)/Staging.swift respectively")
+        print("2. Add your production and staging servers to \(Path.deployDirectory)/Production.swift and \(Path.deployDirectory)/Staging.swift respectively")
+        if configNeedsInfo {
+            print("3. Update the required fields in \(Path.deployDirectory)/Always.swift")
+        }
         print()
-        print("To add Flock dependencies:".yellow)
-        print("1. Add the url and version of the dependency to \(Path.dependenciesFile)")
-        print("2. in your Flockfile, at the top of the file import your dependency and below add `Flock.use(Dependency)`")
     }
     
     // MARK: - Defaults
@@ -205,12 +209,62 @@ class InitCommand: FlockCommand {
     }
     
     private func alwaysDefaults() -> [String] {
+        var projectName = "nil // Fill this in!"
+        var executableName = "nil // // Fill this in! (same as Config.projectName unless your project is divided into modules)"
+        do {
+            
+            let dump = try SPM.dump()
+
+            guard let name = dump["name"] as? String else {
+                throw SPM.Error.processFailed
+            }
+            projectName = "\"\(name)\""
+            
+            if let targets = dump["targets"] as? [[String: Any]], !targets.isEmpty {
+                var targetNames = Set<String>()
+                var dependencyNames = Set<String>()
+                for target in targets {
+                    guard let targetName = target["name"] as? String,
+                        let dependencies = target["dependencies"] as? [String] else {
+                            continue
+                    }
+                    targetNames.insert(targetName)
+                    dependencyNames.formUnion(dependencies)
+                }
+                let executables = targetNames.subtracting(dependencyNames)
+                if executables.count == 1 {
+                    executableName = "\"\(executables.first!)\""
+                } else {
+                    configNeedsInfo = true
+                }
+            } else {
+                executableName = projectName
+            }
+        } catch {
+            configNeedsInfo = true
+        }
         
+        var repoUrl = "nil // Fill this in!"
+        
+        do {
+            var output = ""
+            let urlProcess = try Spawn(args: ["/usr/bin/env", "git", "remote", "get-url", "origin"], output: { (chunk) in
+                output += chunk
+            })
+            
+            if urlProcess.waitForExit() == 0 {
+                repoUrl = "\"\(output.trimmingCharacters(in: .whitespacesAndNewlines))\""
+            }
+        } catch {}
+        
+        if repoUrl.hasPrefix("nil") {
+            configNeedsInfo = true
+        }
+    
         return [
-            "// UPDATE THESE VALUES BEFORE USING FLOCK:",
-            "Config.projectName = nil",
-            "Config.executableName = nil // Same as Config.projectName unless your project is divided into modules",
-            "Config.repoURL = nil",
+            "Config.projectName = \(projectName)",
+            "Config.executableName = \(executableName)",
+            "Config.repoURL = \(repoUrl)",
             "",
             "// IF YOU PLAN TO RUN `flock tools` AS THE ROOT USER BUT `flock deploy` AS A DEDICATED DEPLOY USER,",
             "// (as you should, see https://github.com/jakeheis/Flock/blob/master/README.md#permissions)",
