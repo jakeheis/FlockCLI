@@ -16,7 +16,7 @@ class BuildCommand: FlockCommand {
     func execute() throws {
         try guardFlockIsInitialized()
         
-        Builder.build()
+        try SPM.build()
     }
     
 }
@@ -28,19 +28,19 @@ class CleanCommand: FlockCommand {
     func execute() throws {
         try guardFlockIsInitialized()
         
-        try Builder.clean()
+        try SPM.clean()
     }
     
 }
 
-class CleanAllCommand: FlockCommand {
-    let name = "--clean-all"
+class ResetCommand: FlockCommand {
+    let name = "--reset"
     let shortDescription = "Cleans Flock's build directory and Packages directory"
     
     func execute() throws {
         try guardFlockIsInitialized()
         
-        try Builder.clean(includeDependencies: true)
+        try SPM.reset()
     }
     
 }
@@ -52,11 +52,10 @@ class PullCommand: FlockCommand {
     func execute() throws {
         try guardFlockIsInitialized()
         
-        try Builder.pull()
+        try SPM.pull()
     }
     
 }
-
 
 class UpdateCommand: FlockCommand {
     let name = "--update"
@@ -65,7 +64,7 @@ class UpdateCommand: FlockCommand {
     func execute() throws {
         try guardFlockIsInitialized()
         
-        try Builder.update()
+        try SPM.update()
     }
     
 }

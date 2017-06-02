@@ -26,8 +26,9 @@ class ForwardCommand: FlockCommand {
     func execute() throws {
         try guardFlockIsInitialized()
         
-        let result = Builder.build()
-        if result == false {
+        do {
+            try SPM.build()
+        } catch {
             throw CLIError.error("Error: Flock must be successfully built before tasks can be run".red)
         }
         

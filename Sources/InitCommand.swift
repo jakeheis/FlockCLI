@@ -25,9 +25,9 @@ class InitCommand: FlockCommand {
         
         try createFiles()
         
-        build()
-        
         try updateGitIgnore()
+        
+        try build()
         
         print("Successfully initialized Flock!".green)
         
@@ -71,9 +71,9 @@ class InitCommand: FlockCommand {
         print("Successfully created Flock files".green)
     }
     
-    func build() {
+    func build() throws {
         print("Downloading and building dependencies...".yellow)
-        Builder.build(silent: true)
+        try SPM.build(silent: true)
         print("Successfully downloaded dependencies".green)
     }
     
