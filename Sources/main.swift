@@ -15,6 +15,7 @@ CLI.register(command: CleanCommand())
 CLI.register(command: ResetCommand())
 CLI.register(command: AddEnvironmentCommand())
 CLI.register(command: CreateTaskCommand())
+CLI.register(command: NukeCommand())
 
 CommandAliaser.alias(from: "help", to: "--help")
 CommandAliaser.alias(from: "-h", to: "--help")
