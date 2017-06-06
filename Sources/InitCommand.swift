@@ -17,8 +17,6 @@ class InitCommand: FlockCommand {
     let name = "--init"
     let shortDescription = "Initializes Flock in the current directory"
     
-    var configNeedsInfo = false
-    
     func execute() throws {
         guard !flockIsInitialized else {
             throw CLIError.error("Flock has already been initialized".red)
@@ -49,8 +47,8 @@ class InitCommand: FlockCommand {
         print("Creating Flock files...".yellow)
         
         let alwaysCreator = EnvironmentCreator(env: "always", defaults: alwaysDefaults())
-        let productionCreator = EnvironmentCreator(env: "production", defaults: productionDefaults())
-        let stagingCreator = EnvironmentCreator(env: "staging", defaults: stagingDefaults())
+        let productionCreator = EnvironmentCreator(env: "production", defaults: envConfigDefaults())
+        let stagingCreator = EnvironmentCreator(env: "staging", defaults: envConfigDefaults())
         
         guard alwaysCreator.canCreate && productionCreator.canCreate && stagingCreator.canCreate else {
             throw CLIError.error("deploy/Always.swift, deploy/Production.swift, and deploy/Staging.swift must not already exist".red)
@@ -114,10 +112,8 @@ class InitCommand: FlockCommand {
         print()
         print("Follow these steps to finish setting up Flock:".cyan)
         print("1. Add `exclude: [\"Flockfile.swift\"]` to the end of your Package.swift")
-        print("2. Add your production and staging servers to \(Path.deployDirectory)/Production.swift and \(Path.deployDirectory)/Staging.swift respectively")
-        if configNeedsInfo {
-            print("3. Update the required fields in \(Path.deployDirectory)/Always.swift")
-        }
+        print("2. Update the required fields in \(Path.deployDirectory)/Always.swift")
+        print("3. Add your servers to \(Path.deployDirectory)/Production.swift and \(Path.deployDirectory)/Staging.swift")
         print()
     }
     
@@ -195,7 +191,7 @@ class InitCommand: FlockCommand {
         ].joined(separator: "\n")
     }
     
-    private func productionDefaults() -> [String] {
+    private func envConfigDefaults() -> [String] {
       return [
             "// Config.SSHAuthMethod = SSH.Key(",
             "//     privateKey: \"~/.ssh/key\",",
@@ -205,17 +201,10 @@ class InitCommand: FlockCommand {
       ]
     }
     
-    private func stagingDefaults() -> [String] {
-        return [
-            "// Servers.add(SSHHost: \"StagingServer\", roles: [.app, .db, .web])"
-        ]
-    }
-    
     private func alwaysDefaults() -> [String] {
         var projectName = "nil // Fill this in!"
         var executableName = "nil // // Fill this in! (same as Config.projectName unless your project is divided into modules)"
         do {
-            
             let dump = try SPM.dump()
 
             guard let name = dump["name"] as? String else {
@@ -237,37 +226,16 @@ class InitCommand: FlockCommand {
                 let executables = targetNames.subtracting(dependencyNames)
                 if executables.count == 1 {
                     executableName = "\"\(executables.first!)\""
-                } else {
-                    configNeedsInfo = true
                 }
             } else {
                 executableName = projectName
             }
-        } catch {
-            configNeedsInfo = true
-        }
-        
-        var repoUrl = "nil // Fill this in!"
-        
-        do {
-            var output = ""
-            let urlProcess = try Spawn(args: ["/usr/bin/env", "git", "remote", "get-url", "origin"], output: { (chunk) in
-                output += chunk
-            })
-            
-            if urlProcess.waitForExit() == 0 {
-                repoUrl = "\"\(output.trimmingCharacters(in: .whitespacesAndNewlines))\""
-            }
         } catch {}
         
-        if repoUrl.hasPrefix("nil") {
-            configNeedsInfo = true
-        }
-    
         return [
             "Config.projectName = \(projectName)",
             "Config.executableName = \(executableName)",
-            "Config.repoURL = \(repoUrl)",
+            "Config.repoURL = nil // Fill this in!",
             "",
             "// IF YOU PLAN TO RUN `flock tools` AS THE ROOT USER BUT `flock deploy` AS A DEDICATED DEPLOY USER,",
             "// (as you should, see https://github.com/jakeheis/Flock/blob/master/README.md#permissions)",
