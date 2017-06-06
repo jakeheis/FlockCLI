@@ -21,6 +21,8 @@ class HelpCommand: SwiftCLI.HelpCommand, FlockCommand {
     func execute() throws {
         print("Available commands: ")
         
+        printLine(name: "<task>", description: "Execute the given task")
+        
         for command in availableCommands {
             var name = command.name
             if !command.signature.isEmpty {
@@ -28,8 +30,6 @@ class HelpCommand: SwiftCLI.HelpCommand, FlockCommand {
             }
             printLine(name: name, description: command.shortDescription)
         }
-        
-        printLine(name: "<task>", description: "Execute the given task")
         
         if flockIsInitialized {
             print()
