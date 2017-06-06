@@ -197,7 +197,10 @@ class InitCommand: FlockCommand {
     
     private func productionDefaults() -> [String] {
       return [
-            "// Config.SSHAuthMethod = .key(\"/path/to/mykey\")",
+            "// Config.SSHAuthMethod = SSH.Key(",
+            "//     privateKey: \"~/.ssh/key\",",
+            "//     passphrase: \"passphrase\"",
+            "// )",
             "// Servers.add(ip: \"9.9.9.9\", user: \"user\", roles: [.app, .db, .web])"
       ]
     }

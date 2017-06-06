@@ -42,6 +42,7 @@ class EnvironmentCreator {
         
         var lines = [
             "import Flock",
+            "import SSH",
             "",
             "class \(env.capitalized): Configuration {",
             "\tfunc configure() {"
