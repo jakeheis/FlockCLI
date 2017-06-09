@@ -44,7 +44,7 @@ class EnvironmentCreator {
             "import Flock",
             "import SSH",
             "",
-            "class \(env.capitalized): Configuration {",
+            "class \(env.capitalized): Environment {",
             "\tfunc configure() {"
         ]
         if let defaults = defaults {
