@@ -46,7 +46,7 @@ class InitCommand: FlockCommand {
     func createFiles() throws {
         print("Creating Flock files...".yellow)
         
-        let alwaysCreator = EnvironmentCreator(env: "always", defaults: alwaysDefaults())
+        let alwaysCreator = EnvironmentCreator(env: "base", defaults: baseDefaults())
         let productionCreator = EnvironmentCreator(env: "production", defaults: envConfigDefaults())
         let stagingCreator = EnvironmentCreator(env: "staging", defaults: envConfigDefaults())
         
@@ -164,13 +164,11 @@ class InitCommand: FlockCommand {
       return [
             "import Flock",
             "",
+            "Flock.configure(base: Base(), environments: [Production(), Staging()])",
+            "",
             "Flock.use(.deploy)",
             "Flock.use(.swiftenv)",
             "Flock.use(.server)",
-            "",
-            "Flock.configure(.always, with: Always()) // Located at \(Path.deployDirectory)/Always.swift",
-            "Flock.configure(.env(\"production\"), with: Production()) // Located at \(Path.deployDirectory)/Production.swift",
-            "Flock.configure(.env(\"staging\"), with: Staging()) // Located at \(Path.deployDirectory)/Staging.swift",
             "",
             "Flock.run()",
             ""
@@ -201,7 +199,7 @@ class InitCommand: FlockCommand {
       ]
     }
     
-    private func alwaysDefaults() -> [String] {
+    private func baseDefaults() -> [String] {
         var projectName = "nil // Fill this in!"
         var executableName = "nil // // Fill this in! (same as Config.projectName unless your project is divided into modules)"
         do {
