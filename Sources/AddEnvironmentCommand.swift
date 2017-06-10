@@ -18,7 +18,7 @@ class AddEnvironmentCommand: Command {
     
     func execute() throws {
         let creator = EnvironmentCreator(env: env.value)
-        try creator.create()
+        try creator.create(link: true)
     }
     
 }

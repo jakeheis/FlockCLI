@@ -37,11 +37,6 @@ func createLink(at new: Path, pointingTo existing: Path, logPath: Path) throws {
     try new.symlink(existing)
 }
 
-func createEnvironment(with creator: EnvironmentCreator) throws {
-    log(action: "env", description: creator.env)
-    try creator.create()
-}
-
 private func log(action: String, description: String) {
     var paddedAction =  ""
     for _ in 0..<(12 - action.characters.count) {

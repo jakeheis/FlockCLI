@@ -51,23 +51,21 @@ class InitCommand: FlockCommand {
         let stagingCreator = EnvironmentCreator(env: "staging", defaults: envConfigDefaults())
         
         guard alwaysCreator.canCreate && productionCreator.canCreate && stagingCreator.canCreate else {
-            throw CLIError.error("deploy/Always.swift, deploy/Production.swift, and deploy/Staging.swift must not already exist".red)
+            throw CLIError.error("\(alwaysCreator.environmentFile), \(productionCreator.environmentFile), and \(stagingCreator.environmentFile) must not already exist".red)
         }
         
         // Create files
-        
-        try createDirectory(at: Path.flockDirectory)
         try createDirectory(at: Path.deployDirectory)
         
-        try write(contents: packageDefault(), to: Path.packageFile)
+        try write(contents: flockfileDefault(), to: Path.flockfile)
+        
+        try alwaysCreator.create(link: false)
+        try productionCreator.create(link: false)
+        try stagingCreator.create(link: false)
+        
         try write(contents: dependenciesDefault(), to: Path.dependenciesFile)
         
-        try write(contents: flockfileDefault(), to: Path.flockfile)
-        try createLink(at: Path.mainFile, pointingTo: Path("..") + Path.flockfile, logPath: Path.flockfile)
-        
-        try createEnvironment(with: alwaysCreator)
-        try createEnvironment(with: productionCreator)
-        try createEnvironment(with: stagingCreator)
+        try formFlockDirectory()
         
         print("Successfully created Flock files".green)
     }
@@ -118,47 +116,6 @@ class InitCommand: FlockCommand {
     }
     
     // MARK: - Defaults
-    
-    private func packageDefault() -> String {
-        return [
-            "// Don't change!",
-            "",
-            "import PackageDescription",
-            "import Foundation",
-            "",
-            "let package = Package(",
-            "   name: \"Flockfile\"",
-            ")",
-            "",
-            "let url = URL(fileURLWithPath: \"../\(Path.dependenciesFile)\")",
-            "if let data = try? Data(contentsOf: url),",
-            "    let json = (try? JSONSerialization.jsonObject(with: data, options: [])) as? [String: [[String: Any]]],",
-            "    let dependencies = json[\"dependencies\"] {",
-            "    ",
-            "    for dependency in dependencies {",
-            "        guard let url = dependency[\"url\"] as? String else {",
-            "            print(\"Ignoring invalid dependency \\(dependency)\")",
-            "            continue",
-            "        }",
-            "        let dependencyPackage: Package.Dependency",
-            "        if let version = dependency[\"version\"] as? String, let packageVersion = Version(version) {",
-            "            dependencyPackage = Package.Dependency.Package(url: url, packageVersion)",
-            "        } else if let major = dependency[\"major\"] as? Int {",
-            "            if let minor = dependency[\"minor\"] as? Int {",
-            "                dependencyPackage = Package.Dependency.Package(url: url, majorVersion: major, minor: minor)",
-            "            } else {",
-            "                dependencyPackage = Package.Dependency.Package(url: url, majorVersion: major)",
-            "            }",
-            "        } else {",
-            "            print(\"Ignoring invalid dependency \\(url)\")",
-            "            continue",
-            "        }",
-            "        package.dependencies.append(dependencyPackage)",
-            "    }",
-            "}",
-            ""
-        ].joined(separator: "\n")
-    }
   
     private func flockfileDefault() -> String {
       return [

@@ -35,7 +35,7 @@ class EnvironmentCreator {
         self.defaults = defaults
     }
     
-    func create() throws {
+    func create(link: Bool) throws {
         guard canCreate else {
             throw CLIError.error("Error: \(environmentFile) and/or \(environmentLink) already exist".red)
         }
@@ -58,7 +58,10 @@ class EnvironmentCreator {
         let text = lines.joined(separator: "\n")
         
         try write(contents: text, to: environmentFile)
-        try createLink(at: environmentLink, pointingTo: ".." + environmentFile, logPath: environmentFile)
+        
+        if link {
+            try environmentLink.symlink(".." + environmentFile)
+        }
     }
     
 }
