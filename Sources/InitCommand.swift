@@ -84,8 +84,7 @@ class InitCommand: FlockCommand {
         let appendText = [
             "",
             "# Flock",
-            Path.buildDirectory.description,
-            Path.packagesDirectory.description,
+            Path.flockDirectory.description,
             ""
         ].joined(separator: "\n")
         

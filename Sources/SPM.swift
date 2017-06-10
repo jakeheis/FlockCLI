@@ -19,8 +19,12 @@ class SPM {
     }
     
     static func build(silent: Bool = false) throws {
-        if let dependenciesModification = (try? FileManager.default.attributesOfItem(atPath: Path.dependenciesFile.description))?[FileAttributeKey.modificationDate] as? Date,
-            let lastBuilt = (try? FileManager.default.attributesOfItem(atPath: Path.packagesDirectory.description))?[FileAttributeKey.modificationDate] as? Date,
+        func modificationDate(of path: Path) -> Date? {
+            return (try? FileManager.default.attributesOfItem(atPath: path.description))?[FileAttributeKey.modificationDate] as? Date
+        }
+        
+        if let dependenciesModification = modificationDate(of: Path.dependenciesFile),
+            let lastBuilt = modificationDate(of: Path.executable),
             dependenciesModification > lastBuilt {
             
             print("FlockDependencies.json changed -- rebuilding dependencies".yellow)
@@ -60,21 +64,6 @@ class SPM {
         }
         
         return output
-    }
-    
-    static func pull() throws {
-        let outputHandler: (String) -> () = { (chunk) in
-            print(chunk, terminator: "")
-        }
-        
-        for package in try Path.packagesDirectory.children() {
-            let pullProcess = try Spawn(args: ["/usr/bin/env", "git", "-C", package.description, "pull"], output: outputHandler)
-            
-            let status = pullProcess.waitForExit()
-            if status != 0 {
-                throw CLIError.error("Git pull failed for package \(package)")
-            }
-        }
     }
     
     // MARK: - Private

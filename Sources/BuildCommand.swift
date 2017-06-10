@@ -45,18 +45,6 @@ class ResetCommand: FlockCommand {
     
 }
 
-class PullCommand: FlockCommand {
-    let name = "--pull"
-    let shortDescription = "Debug only; use --update instead"
-    
-    func execute() throws {
-        try guardFlockIsInitialized()
-        
-        try SPM.pull()
-    }
-    
-}
-
 class UpdateCommand: FlockCommand {
     let name = "--update"
     let shortDescription = "Updates Flock's dependencies in the current project"

@@ -11,7 +11,6 @@ import PathKit
 extension Path {
     static let deployDirectory = Path("config/deploy")
     static let flockDirectory = Path(".flock")
-    static let packagesDirectory = flockDirectory + "Packages"
     static let buildDirectory = flockDirectory + ".build"
     
     static let packageFile = flockDirectory + "Package.swift"
