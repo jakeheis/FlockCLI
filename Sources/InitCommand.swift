@@ -50,21 +50,16 @@ class InitCommand: FlockCommand {
         
         try createDirectory(at: Path.deployDirectory)
         
-        do {
-            try EnvironmentCreator.create(env: "base", defaults: baseDefaults(), link: false)
-        } catch {}
-        do {
-            try EnvironmentCreator.create(env: "production", defaults: envConfigDefaults(), link: false)
-        } catch {}
-        do {
-            try EnvironmentCreator.create(env: "staging", defaults: envConfigDefaults(), link: false)
-        } catch {}
+        try create(env: "base", defaults: baseDefaults())
+        try create(env: "production", defaults: envConfigDefaults())
+        try create(env: "staging", defaults: envConfigDefaults())
         
         if !Path.dependenciesFile.exists {
             try write(contents: dependenciesDefault(), to: Path.dependenciesFile)
         }
         
         try formFlockDirectory()
+        try linkFilesIntoFlock()
         
         print("Successfully created Flock files".green)
     }
@@ -112,6 +107,30 @@ class InitCommand: FlockCommand {
         print("2. Update the required fields in \(Path.deployDirectory)/Always.swift")
         print("3. Add your servers to \(Path.deployDirectory)/Production.swift and \(Path.deployDirectory)/Staging.swift")
         print()
+    }
+    
+    // MARK: - Helpers
+    
+    private func create(env: String, defaults: [String]) throws {
+        let fileName = "\(env.capitalized).swift"
+        let filePath = Path.deployDirectory + fileName
+        
+        var lines = [
+            "import Flock",
+            "import SSH",
+            "",
+            "class \(env.capitalized): Environment {",
+            "\tfunc configure() {"
+        ]
+        lines += defaults.map { "\t\t\($0)" }
+        lines += [
+            "\t}",
+            "}",
+            ""
+        ]
+        let text = lines.joined(separator: "\n")
+        
+        try write(contents: text, to: filePath)
     }
     
     // MARK: - Defaults

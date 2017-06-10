@@ -13,7 +13,6 @@ CLI.register(command: UpdateCommand())
 CLI.register(command: CleanCommand())
 CLI.register(command: ResetCommand())
 CLI.register(command: CreateTaskCommand())
-CLI.register(command: AddEnvironmentCommand())
 CLI.register(command: NukeCommand())
 
 CommandAliaser.alias(from: "help", to: "--help")

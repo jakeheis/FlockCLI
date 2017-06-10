@@ -25,6 +25,11 @@ extension FlockCommand {
                 return false
             }
         }
+        
+        do {
+            try linkFilesIntoFlock()
+        } catch {}
+        
         return true
     }
     
@@ -43,9 +48,14 @@ extension FlockCommand {
         
         try Path.packageFile.write(packageDefault())
         try Path.mainFile.symlink(Path("..") + Path.flockfile)
-        
+    }
+    
+    func linkFilesIntoFlock() throws {
         for file in try Path.deployDirectory.children() where file.extension == "swift" {
-            try (Path.flockDirectory + file.lastComponent).symlink(Path("..") + file)
+            let link = Path.flockDirectory + file.lastComponent
+            if !link.exists {
+                try link.symlink(Path("..") + file)
+            }
         }
     }
     
