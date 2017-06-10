@@ -158,6 +158,7 @@ class InitCommand: FlockCommand {
     private func baseDefaults() -> [String] {
         var projectName = "nil // Fill this in!"
         var executableName = "nil // // Fill this in! (same as Config.projectName unless your project is divided into modules)"
+        var frameworkType = "GenericServer"
         do {
             let dump = try SPM.dump()
 
@@ -184,12 +185,34 @@ class InitCommand: FlockCommand {
             } else {
                 executableName = projectName
             }
+            
+            if let dependencies = dump["dependencies"] as? [[String: Any]] {
+                for dependency in dependencies {
+                    let url = dependency["url"] as? String
+                    if url == "https://github.com/vapor/vapor" {
+                        frameworkType = "Vapor"
+                        break
+                    } else if url == "https://github.com/Zewo/Zewo" {
+                        frameworkType = "Zewo"
+                        break
+                    } else if url == "https://github.com/IBM-Swift/Kitura" {
+                        frameworkType = "Kitura"
+                        break
+                    } else if url == "https://github.com/PerfectlySoft/Perfect" {
+                        frameworkType = "Perfect"
+                        break
+                    }
+                }
+            }
         } catch {}
         
         return [
             "Config.projectName = \(projectName)",
             "Config.executableName = \(executableName)",
             "Config.repoURL = nil // Fill this in!",
+            "",
+            "Config.serverFramework = \(frameworkType)Framework()",
+            "Config.processController = Nohup() // Other option: Supervisord()",
             "",
             "// IF YOU PLAN TO RUN `flock tools` AS THE ROOT USER BUT `flock deploy` AS A DEDICATED DEPLOY USER,",
             "// (as you should, see https://github.com/jakeheis/Flock/blob/master/README.md#permissions)",
