@@ -36,7 +36,7 @@ class InitCommand: FlockCommand {
     }
     
     func checkExisting() throws {
-        for path in [Path.flockDirectory, Path.flockfile, Path.packageFile] {
+        for path in [Path.flockDirectory, Path.flockfile] {
             if path.exists {
                 throw CLIError.error("\(path) must not already exist".red)
             }
@@ -92,14 +92,15 @@ class InitCommand: FlockCommand {
         let gitIgnorePath = Path(".gitignore")
         
         if gitIgnorePath.exists {
-            guard let gitIgnore = OutputStream(toFileAtPath: gitIgnorePath.description, append: true) else {
-                throw CLIError.error("Couldn't open .gitignore stream")
+            let contents: String? = try? gitIgnorePath.read()
+            if contents == nil || !contents!.contains("# Flock") {
+                guard let gitIgnore = OutputStream(toFileAtPath: gitIgnorePath.description, append: true) else {
+                    throw CLIError.error("Couldn't open .gitignore stream")
+                }
+                gitIgnore.open()
+                gitIgnore.write(appendText, maxLength: appendText.characters.count)
+                gitIgnore.close()
             }
-            gitIgnore.open()
-            gitIgnore.write(appendText, maxLength: appendText.characters.count)
-            gitIgnore.close()
-        } else {
-            try gitIgnorePath.write(appendText)
         }
         
         print("Successfully added Flock files to .gitignore".green)
