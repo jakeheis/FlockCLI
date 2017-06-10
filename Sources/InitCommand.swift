@@ -46,24 +46,23 @@ class InitCommand: FlockCommand {
     func createFiles() throws {
         print("Creating Flock files...".yellow)
         
-        let alwaysCreator = EnvironmentCreator(env: "base", defaults: baseDefaults())
-        let productionCreator = EnvironmentCreator(env: "production", defaults: envConfigDefaults())
-        let stagingCreator = EnvironmentCreator(env: "staging", defaults: envConfigDefaults())
-        
-        guard alwaysCreator.canCreate && productionCreator.canCreate && stagingCreator.canCreate else {
-            throw CLIError.error("\(alwaysCreator.environmentFile), \(productionCreator.environmentFile), and \(stagingCreator.environmentFile) must not already exist".red)
-        }
-        
-        // Create files
-        try createDirectory(at: Path.deployDirectory)
-        
         try write(contents: flockfileDefault(), to: Path.flockfile)
         
-        try alwaysCreator.create(link: false)
-        try productionCreator.create(link: false)
-        try stagingCreator.create(link: false)
+        try createDirectory(at: Path.deployDirectory)
         
-        try write(contents: dependenciesDefault(), to: Path.dependenciesFile)
+        do {
+            try EnvironmentCreator.create(env: "base", defaults: baseDefaults(), link: false)
+        } catch {}
+        do {
+            try EnvironmentCreator.create(env: "production", defaults: envConfigDefaults(), link: false)
+        } catch {}
+        do {
+            try EnvironmentCreator.create(env: "staging", defaults: envConfigDefaults(), link: false)
+        } catch {}
+        
+        if !Path.dependenciesFile.exists {
+            try write(contents: dependenciesDefault(), to: Path.dependenciesFile)
+        }
         
         try formFlockDirectory()
         

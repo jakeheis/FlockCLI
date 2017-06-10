@@ -11,33 +11,15 @@ import PathKit
 
 class EnvironmentCreator {
     
-    let env: String
-    let defaults: [String]?
+    private init() {}
     
-    var fileName: String {
-        return "\(env.capitalized).swift"
-    }
-    
-    var environmentFile: Path {
-        return Path.deployDirectory + fileName
-    }
-    
-    var environmentLink: Path {
-        return Path.flockDirectory + fileName
-    }
-    
-    var canCreate: Bool {
-        return !environmentFile.exists && !environmentLink.exists
-    }
-    
-    init(env: String, defaults: [String]? = nil) {
-        self.env = env
-        self.defaults = defaults
-    }
-    
-    func create(link: Bool) throws {
-        guard canCreate else {
-            throw CLIError.error("Error: \(environmentFile) and/or \(environmentLink) already exist".red)
+    static func create(env: String, defaults: [String]? = nil, link: Bool) throws {
+        let fileName = "\(env.capitalized).swift"
+        let filePath = Path.deployDirectory + fileName
+        let linkPath = Path.flockDirectory + fileName
+        
+        if filePath.exists {
+            throw CLIError.error("Error: \(filePath) already exists".red)
         }
         
         var lines = [
@@ -57,10 +39,10 @@ class EnvironmentCreator {
         ]
         let text = lines.joined(separator: "\n")
         
-        try write(contents: text, to: environmentFile)
+        try write(contents: text, to: filePath)
         
         if link {
-            try environmentLink.symlink(".." + environmentFile)
+            try linkPath.symlink(".." + filePath)
         }
     }
     
