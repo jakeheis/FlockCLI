@@ -207,17 +207,19 @@ class InitCommand: FlockCommand {
             
             if let dependencies = dump["dependencies"] as? [[String: Any]] {
                 for dependency in dependencies {
-                    let url = dependency["url"] as? String
-                    if url == "https://github.com/vapor/vapor" {
+                    guard let url = dependency["url"] as? String else {
+                        continue
+                    }
+                    if url.hasPrefix("https://github.com/vapor/vapor") {
                         frameworkType = "Vapor"
                         break
-                    } else if url == "https://github.com/Zewo/Zewo" {
+                    } else if url.hasPrefix("https://github.com/Zewo/Zewo") {
                         frameworkType = "Zewo"
                         break
-                    } else if url == "https://github.com/IBM-Swift/Kitura" {
+                    } else if url.hasPrefix("https://github.com/IBM-Swift/Kitura") {
                         frameworkType = "Kitura"
                         break
-                    } else if url == "https://github.com/PerfectlySoft/Perfect" {
+                    } else if url.hasPrefix("https://github.com/PerfectlySoft/Perfect") {
                         frameworkType = "Perfect"
                         break
                     }
