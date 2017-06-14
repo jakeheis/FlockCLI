@@ -227,7 +227,9 @@ class InitCommand: FlockCommand {
             }
         } catch {}
         
-        return [
+        
+        
+        var lines = [
             "Config.projectName = \(projectName)",
             "Config.executableName = \(executableName)",
             "Config.repoURL = nil // Fill this in!",
@@ -241,9 +243,14 @@ class InitCommand: FlockCommand {
             "// Config.supervisordUser = \"deploy:deploy\"",
             "",
             "// Optional config:",
-            "// Config.deployDirectory = \"/var/www\"",
-            "// Config.swiftVersion = \"3.0.2\" // If you have a `.swift-version` file, this line is not necessary"
+            "// Config.deployDirectory = \"/var/www\""
         ]
+        
+        if !Path(".swift-version").exists {
+            lines.append("// Config.swiftVersion = \"3.1\" // If you have a `.swift-version` file, this line is not necessary")
+        }
+        
+        return lines
     }
   
 }
