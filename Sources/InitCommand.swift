@@ -237,17 +237,13 @@ class InitCommand: FlockCommand {
             "Config.serverFramework = \(frameworkType)Framework()",
             "Config.processController = Nohup() // Other option: Supervisord()",
             "",
-            "// IF YOU PLAN TO RUN `flock tools` AS THE ROOT USER BUT `flock deploy` AS A DEDICATED DEPLOY USER,",
-            "// (as you should, see https://github.com/jakeheis/Flock/blob/master/README.md#permissions)",
-            "// SET THIS VARIABLE TO THE NAME OF YOUR (ALREADY CREATED) DEPLOY USER BEFORE RUNNING `flock tools`:",
-            "// Config.supervisordUser = \"deploy:deploy\"",
-            "",
             "// Optional config:",
-            "// Config.deployDirectory = \"/var/www\""
+            "// Config.deployDirectory = \"/var/www\"",
+            "// Config.repoBranch = \"release\"",
         ]
         
         if !Path(".swift-version").exists {
-            lines.append("// Config.swiftVersion = \"3.1\" // If you have a `.swift-version` file, this line is not necessary")
+            lines.append("// Config.swiftVersion = \"3.1\"")
         }
         
         return lines
