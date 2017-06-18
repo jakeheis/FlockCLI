@@ -54,10 +54,10 @@ class CreateTaskCommand: FlockCommand {
         var lines = [
             "import Flock",
             "",
-            "extension Flock {",
-            "   public static let <NameThisGroup>: [Task] = [",
+            "public extension TaskSource {",
+            "   static let <NameThisGroup> = TaskSource(tasks: [",
             "       \(taskName)()",
-            "   ]",
+            "   ])",
             "}",
             "",
             "// Delete if no custom Config properties are needed",
