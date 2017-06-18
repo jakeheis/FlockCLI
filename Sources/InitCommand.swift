@@ -170,7 +170,7 @@ class InitCommand: FlockCommand {
             "//     privateKey: \"~/.ssh/key\",",
             "//     passphrase: \"passphrase\"",
             "// )",
-            "// Servers.add(ip: \"9.9.9.9\", user: \"user\", roles: [.app, .db, .web])"
+            "// Flock.serve(ip: \"9.9.9.9\", user: \"user\", roles: [.app, .db, .web])"
       ]
     }
     
