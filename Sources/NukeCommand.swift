@@ -15,9 +15,15 @@ class NukeCommand: Command {
     
     func execute() throws {
         if Input.awaitYesNoInput(message: "Are you sure you want to remove all Flock files from this project?") {
-            try Path.flockDirectory.delete()
-            try Path.flockfile.delete()
-            try Path.deployDirectory.delete()
+            if Path.flockDirectory.exists {
+                try Path.flockDirectory.delete()
+            }
+            if Path.flockfile.exists {
+                try Path.flockfile.delete()
+            }
+            if Path.deployDirectory.exists {
+                try Path.deployDirectory.delete()
+            }
         }
     }
     

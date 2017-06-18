@@ -23,11 +23,11 @@ class SPM {
             return (try? FileManager.default.attributesOfItem(atPath: path.description))?[FileAttributeKey.modificationDate] as? Date
         }
         
-        if let dependenciesModification = modificationDate(of: Path.dependenciesFile),
+        if let dependenciesModification = modificationDate(of: Path.flockPackageFile),
             let lastBuilt = modificationDate(of: Path.executable),
             dependenciesModification > lastBuilt {
             
-            print("FlockDependencies.json changed -- rebuilding dependencies".yellow)
+            print("FlockPackage.swift changed -- rebuilding dependencies".yellow)
             try reset()
         }
         

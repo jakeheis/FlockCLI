@@ -9,15 +9,15 @@
 import PathKit
 
 extension Path {
-    static let deployDirectory = Path("config/deploy")
-    static let flockDirectory = Path(".flock")
-    static let buildDirectory = flockDirectory + ".build"
-    
-    static let packageFile = flockDirectory + "Package.swift"
-    static let dependenciesFile = deployDirectory + "FlockDependencies.json"
-    static let mainFile = flockDirectory + "main.swift"
     static let flockfile = Path("Flockfile.swift")
+    static let deployDirectory = Path("config/deploy")
+    static let flockPackageFile = deployDirectory + "FlockPackage.swift"
     
+    static let flockDirectory = Path(".flock")
+    static let packageFile = flockDirectory + "Package.swift"
+    static let mainFile = flockDirectory + "main.swift"
+    
+    static let buildDirectory = flockDirectory + ".build"
     static let executable = buildDirectory + "debug/flockfile"
 }
 
