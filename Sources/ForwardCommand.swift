@@ -12,7 +12,6 @@
     import Darwin
 #endif
 
-import Foundation
 import SwiftCLI
 import PathKit
 
