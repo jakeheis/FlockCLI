@@ -1,4 +1,8 @@
-import Darwin
+#if os(Linux)
+    import Glibc
+#else
+    import Darwin
+#endif
 import SwiftCLI
 
 CLI.setup(name: "flock", version: "0.0.1")
