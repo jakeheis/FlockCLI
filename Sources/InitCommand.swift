@@ -121,7 +121,7 @@ class InitCommand: FlockCommand {
         
         var lines = [
             "import Flock",
-            "import SSH",
+            "import Shout",
             "",
             "class \(env.capitalized): Environment {",
             "\tfunc configure() {"
