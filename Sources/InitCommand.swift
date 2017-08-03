@@ -57,6 +57,9 @@ class InitCommand: FlockCommand {
         try write(contents: packageDefault(), to: Path.flockPackageFile)
         
         try formFlockDirectory()
+
+        try write(contents: secretsDefault(), to: Path.secretsFile)
+
         try linkFilesIntoFlock()
         
         print("Successfully created Flock files".green)
@@ -84,6 +87,7 @@ class InitCommand: FlockCommand {
             "",
             "# Flock",
             Path.flockDirectory.description,
+            "\(Path.flockDirectory.description)/Secrets.swift",
             ""
         ].joined(separator: "\n")
         
@@ -166,12 +170,22 @@ class InitCommand: FlockCommand {
     
     private func envConfigDefaults() -> [String] {
       return [
-            "// Config.SSHAuthMethod = SSH.Key(",
-            "//     privateKey: \"~/.ssh/key\",",
-            "//     passphrase: \"passphrase\"",
-            "// )",
+            "// Config.SSHAuthMethod = Secrets.key",
             "// Flock.serve(ip: \"9.9.9.9\", user: \"user\", roles: [.app, .db, .web])"
       ]
+    }
+
+    private func secretsDefault() -> String {
+        return [
+            "import Shout",
+            "",
+            "internal class Secrets {",
+            "    static internal let key: SSH.Key = SSH.Key(",
+            "        privateKey: \"~/.ssh/key\",",
+            "        passphrase: \"passphrase\"",
+            "    )",
+            "}"
+        ].joined(separator: "\n")
     }
     
     private func baseDefaults() -> [String] {
