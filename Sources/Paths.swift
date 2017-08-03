@@ -15,6 +15,7 @@ extension Path {
     
     static let flockDirectory = Path(".flock")
     static let packageFile = flockDirectory + "Package.swift"
+    static let secretsFile = flockDirectory + "Secrets.swift"
     static let mainFile = flockDirectory + "main.swift"
     
     static let buildDirectory = flockDirectory + ".build"
