@@ -10,25 +10,25 @@ import SwiftCLI
 import Spawn
 import PathKit
 
-class HelpCommand: SwiftCLI.HelpCommand, FlockCommand {
+class HelpCommand: FlockCommand {
     
     let name = "--help"
     let shortDescription = "Prints help information"
     
-    var printCLIDescription: Bool = true
-    var availableCommands: [Command] = []
+    let cli: CLI
+    
+    init(cli: CLI) {
+        self.cli = cli
+    }
         
     func execute() throws {
         print("Available commands: ")
         
         printLine(name: "<task>", description: "Execute the given task")
         
-        for command in availableCommands {
-            var name = command.name
-            if !command.signature.isEmpty {
-                name += " \(command.signature)"
-            }
-            printLine(name: name, description: command.shortDescription)
+        for command in cli.children.flatMap({ $0 as? Command }) {
+            let path = CommandGroupPath(cli: cli).appending(command)
+            printLine(name: path.joined(), description: command.shortDescription)
         }
         
         if flockIsInitialized {
@@ -47,7 +47,7 @@ class HelpCommand: SwiftCLI.HelpCommand, FlockCommand {
     }
     
     private func printLine(name: String, description: String) {
-        let spacing = String(repeating: " ", count: 20 - name.characters.count)
+        let spacing = String(repeating: " ", count: 20 - name.count)
         print("flock \(name)\(spacing)\(description)")
     }
     

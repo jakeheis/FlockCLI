@@ -22,13 +22,13 @@ class CreateTaskCommand: FlockCommand {
     public func execute() throws {
         var name = taskName.value
         if name.hasSuffix(taskSuffix) {
-            name = name.substring(to: name.index(name.endIndex, offsetBy: taskSuffix.characters.count))
+            name = String(name[..<name.index(name.endIndex, offsetBy: taskSuffix.count)])
         }
         
         let namespace: String?
-        if let colonIndex = name.characters.index(of: ":") {
-            namespace = name.substring(to: colonIndex)
-            name = name.substring(from: name.index(after: colonIndex))
+        if let colonIndex = name.index(of: ":") {
+            namespace = String(name[..<colonIndex])
+            name = String(name[name.index(after: colonIndex)...])
         } else {
             namespace = nil
         }
@@ -38,7 +38,7 @@ class CreateTaskCommand: FlockCommand {
         let fileName = namespaceSegment + taskSegment + ".swift"
         let path = Path.deployDirectory + fileName
         if path.exists {
-            throw CLIError.error("\(path) already exists".red)
+            throw CLI.Error(message: "\(path) already exists".red)
         }
         
         try write(contents: template(for: name, in: namespace), to: path)

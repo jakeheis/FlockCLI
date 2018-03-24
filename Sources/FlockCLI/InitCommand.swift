@@ -19,7 +19,7 @@ class InitCommand: FlockCommand {
     
     func execute() throws {
         guard !flockIsInitialized else {
-            throw CLIError.error("Error: ".red + "Flock has already been initialized")
+            throw CLI.Error(message: "Error: ".red + "Flock has already been initialized")
         }
         
         try checkExisting()
@@ -38,7 +38,7 @@ class InitCommand: FlockCommand {
     func checkExisting() throws {
         for path in [Path.flockDirectory, Path.flockfile] {
             if path.exists {
-                throw CLIError.error("\(path) must not already exist".red)
+                throw CLI.Error(message: "\(path) must not already exist".red)
             }
         }
     }
@@ -90,10 +90,10 @@ class InitCommand: FlockCommand {
         let contents: String? = try? gitIgnorePath.read()
         if contents == nil || !contents!.contains("# Flock") {
             guard let gitIgnore = OutputStream(toFileAtPath: gitIgnorePath.description, append: true) else {
-                throw CLIError.error("Couldn't open .gitignore stream")
+                throw CLI.Error(message: "Couldn't open .gitignore stream")
             }
             gitIgnore.open()
-            gitIgnore.write(appendText, maxLength: appendText.characters.count)
+            gitIgnore.write(appendText, maxLength: appendText.count)
             gitIgnore.close()
         }
         

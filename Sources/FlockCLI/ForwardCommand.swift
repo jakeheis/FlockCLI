@@ -28,7 +28,7 @@ class ForwardCommand: FlockCommand {
         do {
             try SPM.build()
         } catch {
-            throw CLIError.error("Error: Flock must be successfully built before tasks can be run".red)
+            throw CLI.Error(message: "Error: Flock must be successfully built before tasks can be run".red)
         }
         
         execv(Path.executable.description, CommandLine.unsafeArgv)

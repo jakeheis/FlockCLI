@@ -35,7 +35,7 @@ extension FlockCommand {
     
     func guardFlockIsInitialized() throws {
         if !flockIsInitialized {
-            throw CLIError.error("Error: ".red + "Flock has not been initialized in this directory yet - run `flock --init`")
+            throw CLI.Error(message: "Error: ".red + "Flock has not been initialized in this directory yet - run `flock --init`")
         }
     }
     
