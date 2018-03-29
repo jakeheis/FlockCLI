@@ -37,9 +37,9 @@ class InitCommand: FlockCommand {
 }
 
 let defaultFlockfile = """
-// beak: jakeheis/Flock FlockLib @ .branch("beak")
+// beak: jakeheis/Flock @ .branch("beak")
 
-import FlockLib
+import Flock
 import Foundation
 import Shout
 
