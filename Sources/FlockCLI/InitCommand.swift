@@ -167,8 +167,10 @@ func startServer(on server: Server, env: Environment) throws {
         // command += " --env=\\(env.name)"
         // Perfect (example; many options available):
         // command += " --port customPort --root customRoot"
-     
-        try server.execute("nohup \\(command) > /dev/null 2>&1 &")
+
+        try server.within(env.currentDirectory) {
+            try server.execute("nohup \\(command) > /dev/null 2>&1 &")
+        }
     }
     */
 }
@@ -225,8 +227,8 @@ func restartServer(on server: Server, env: Environment) throws {
     // Uncomment the following if you *are not* using supervisord:
     //
     /*
-     try stopServer(on: server, project: project)
-     try startServer(on: server, project: project)
+     try stopServer(on: server, env: env)
+     try startServer(on: server, env: env)
      */
 }
 
@@ -237,7 +239,7 @@ func executeSupervisor(command: String, server: Server, env: Environment) throws
 }
 
 func findServerPid(on server: Server) throws -> String? {
-    let processes = try server.capture("ps aux | grep \\"swift run\\"")
+    let processes = try server.capture("ps aux | grep \\"\\.build/.*/release\\"")
     
     let lines = processes.components(separatedBy: "\\n")
     for line in lines where !line.contains("grep") {
