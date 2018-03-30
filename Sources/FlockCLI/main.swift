@@ -16,7 +16,8 @@ flock.optionRecognizer = FlockOptionRecognizer()
 
 flock.commands = [
     InitCommand(),
-    ListCommand()
+    ListCommand(),
+    CleanCommand()
 ]
 
 flock.goAndExit()

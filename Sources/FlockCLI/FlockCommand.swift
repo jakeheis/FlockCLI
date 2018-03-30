@@ -6,21 +6,20 @@
 //
 //
 
-import Foundation
+import PathKit
 import Rainbow
 import SwiftCLI
-import BeakCore
 
 protocol FlockCommand: Command {}
 
 extension FlockCommand {
     
-    var flockPath: String {
-        return "Flock.swift"
+    var flockPath: Path {
+        return Path("Flock.swift")
     }
     
     var flockIsInitialized: Bool {
-        return FileManager.default.fileExists(atPath: flockPath)
+        return flockPath.exists
     }
     
     func guardFlockIsInitialized() throws {

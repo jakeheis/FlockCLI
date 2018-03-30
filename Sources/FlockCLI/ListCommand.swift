@@ -5,6 +5,8 @@
 //  Created by Jake Heiser on 3/28/18.
 //
 
+import BeakCore
+import PathKit
 import SwiftCLI
 
 class ListCommand: FlockCommand {
