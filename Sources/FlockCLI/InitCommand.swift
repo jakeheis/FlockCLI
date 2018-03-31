@@ -16,7 +16,7 @@ class InitCommand: FlockCommand {
     
     func execute() throws {
         guard !flockIsInitialized else {
-            throw CLI.Error(message: "Error: ".red + "Flock has already been initialized")
+            throw FlockError(message: "Flock has already been initialized")
         }
         
         stdout <<< "Creating Flock.swift"
