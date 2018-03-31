@@ -10,9 +10,11 @@ import Foundation
 class CleanCommand: FlockCommand {
     
     let name = "clean"
+    let shortDescription = "Clean the Flock build directory"
     
     func execute() throws {
-        try Beak.cleanBuilds(for: flockPath)
+        try guardFlockIsInitialized()
+        try Beak.cleanBuilds()
     }
     
 }

@@ -1,5 +1,5 @@
 //
-//  FlockRouter.swift
+//  Router.swift
 //  FlockCLI
 //
 //  Created by Jake Heiser on 10/30/16.
@@ -8,7 +8,7 @@
 
 import SwiftCLI
 
-class FlockRouter: Router {
+class Router: SwiftCLI.Router {
     
     func route(cli: CLI, arguments: ArgumentList) -> RouteResult {
         let path = CommandGroupPath(cli: cli)

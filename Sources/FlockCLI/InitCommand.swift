@@ -19,19 +19,19 @@ class InitCommand: FlockCommand {
             throw CLI.Error(message: "Error: ".red + "Flock has already been initialized")
         }
         
-        print("Creating Flock.swift")
+        stdout <<< "Creating Flock.swift"
         
-        try flockPath.write(defaultFlockfile)
+        try Beak.flockPath.write(defaultFlockfile)
         
-        print("Building dependencies")
+        stdout <<< "Building dependencies"
         do {
-            try Beak.execute(args: ["run", "--path", flockPath.string])
+            try Beak.execute(args: ["run", "--path", Beak.flockPath.string])
         } catch {
-            print("Dependency build failed".red)
+            stdout <<< "Dependency build failed".red
             return
         }
         
-        print("Successfully initialized Flock".green)
+        stdout <<< "Successfully initialized Flock".green
     }
     
 }

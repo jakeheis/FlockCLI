@@ -14,17 +14,13 @@ protocol FlockCommand: Command {}
 
 extension FlockCommand {
     
-    var flockPath: Path {
-        return Path("Flock.swift")
-    }
-    
     var flockIsInitialized: Bool {
-        return flockPath.exists
+        return Beak.flockPath.exists
     }
     
     func guardFlockIsInitialized() throws {
         if !flockIsInitialized {
-            throw CLI.Error(message: "Error: ".red.bold + "Flock has not been initialized in this directory yet - run `flock --init`")
+            throw CLI.Error(message: "Error: ".red.bold + "Flock has not been initialized in this directory yet - run `flock init`")
         }
     }
     
