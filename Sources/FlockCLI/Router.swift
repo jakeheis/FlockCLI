@@ -24,8 +24,11 @@ class Router: SwiftCLI.Router {
             return .success(path.appending(command))
         }
         
-        // Ran something like `flock deploy`
-        return .success(path.appending(ForwardCommand()))
+        if let tasks = try? Beak.findTasks(), tasks.contains(where: { $0.name == name.value }) {
+            return .success(path.appending(ForwardCommand()))
+        }
+        
+        return .failure(partialPath: path, notFound: name.value)
     }
     
 }
