@@ -20,7 +20,7 @@ struct Beak {
         do {
             try beak.execute(arguments: args)
         } catch let error {
-            throw FlockError(message: error.localizedDescription + " (Beak failure)")
+            throw FlockError(message: String(describing: error) + " (Beak failure)")
         }
     }
     

@@ -6,8 +6,11 @@
 //
 //
 
+import Foundation
+import PathKit
 import Rainbow
 import SwiftCLI
+import SwiftShell
 
 class InitCommand: FlockCommand {
   
@@ -19,24 +22,46 @@ class InitCommand: FlockCommand {
             throw FlockError(message: "Flock has already been initialized")
         }
         
-        stdout <<< "Creating Flock.swift"
+        stdout <<< ""
+        stdout <<< "1. Generating " + "Flock.swift".blue
+        stdout <<< ""
         
-        try Beak.flockPath.write(defaultFlockfile)
+        let contents = generateContents()
+        try Beak.flockPath.write(contents)
         
-        stdout <<< "Building dependencies"
-        do {
-            try Beak.execute(args: ["run", "--path", Beak.flockPath.string])
-        } catch {
-            stdout <<< "Dependency build failed".red
-            return
-        }
+        stdout <<< ""
+        stdout <<< "2. Building dependencies (this may take a minute)"
         
-        stdout <<< "Successfully initialized Flock".green
+        try Beak.execute(args: ["run", "--path", Beak.flockPath.string])
+        
+        stdout <<< ""
+        stdout <<< "Success!".green.bold + " Flock has been initialized"
+        stdout <<< ""
+        stdout <<< "Next steps:"
+        stdout <<< " 1. Open Flock.swift and finish filling out the configuration"
+        stdout <<< " 2. If you want Flock to automatically restart your app, fill out startServer(on server: Server ...) and related functions"
+        stdout <<< " 3. Run `flock deploy`"
+        stdout <<< ""
+    }
+    
+    private func generateContents() -> String {
+        let defaultName = Path(".").absolute().lastComponent
+        let inputName = Input.readLine(prompt: "Project name: (\(defaultName))")
+        
+        let defaultUrl = run("git", "remote", "get-url", "origin").stdout
+        let prompt = "Repository url: " + (defaultUrl.isEmpty ? "" : "(\(defaultUrl)) ")
+        let inputUrl = Input.readLine(prompt: prompt)
+        
+        return generateFlockfile(
+            name: inputName.isEmpty ? defaultName : inputName,
+            url: inputUrl.isEmpty ? defaultUrl : inputUrl
+        )
     }
     
 }
 
-let defaultFlockfile = """
+private func generateFlockfile(name: String, url: String) -> String {
+    return """
 // beak: jakeheis/Flock @ .branch("beak")
 
 import Flock
@@ -45,16 +70,18 @@ import Shout
 
 // MARK: - Environments
 
-let myProject = Project(
-    name: "MyProject",
-    repoURL: "https://github.com/me/Project"
+let project = Project(
+    name: "\(name)",
+    repoURL: "\(url)"
 )
 
 public let production = Environment(
-    project: myProject,
+    project: project,
     name: "production",
     servers: [
-        ServerLogin(ip: "1.1.1.1", user: "deploy", auth: SSHKey(privateKey: "aKey"))
+        // ServerLogin(ip: "1.1.1.1", user: "deploy", auth: SSHKey(privateKey: "aKey")),
+        // ServerLogin(ip: "1.1.1.2", user: "deploy", auth: SSHPassword(password: "aPassword")),
+        // ServerLogin(ip: "1.1.1.3", port: 234, user: "deploy", auth: SSHAgent())
     ]
 )
 
@@ -63,7 +90,7 @@ public let production = Environment(
 //
 /*
 public let staging = Environment(
-    project: myProject,
+    project: project,
     name: "staging",
     servers: [
         ServerLogin(ip: "1.1.1.1", user: "deploy", auth: SSHKey(privateKey: "aKey"))
@@ -89,8 +116,9 @@ public func deploy(env: Environment = production) {
         try server.execute("swift build -C \\(cloneDirectory) -c release")
         
         try server.execute("ln -sfn \\(cloneDirectory) \\(env.currentDirectory)")
-        
-        try restartServer(on: server, env: env)
+    
+        // Uncomment after filling out the restartServer function
+        // try restartServer(on: server, env: env)
     }
 }
 
@@ -239,7 +267,7 @@ func executeSupervisor(command: String, server: Server, env: Environment) throws
 }
 
 func findServerPid(on server: Server) throws -> String? {
-    let processes = try server.capture("ps aux | grep \\"\\.build/.*/release\\"")
+    let processes = try server.capture("ps aux | grep \\"\\\\.build/.*/release\\"")
     
     let lines = processes.components(separatedBy: "\\n")
     for line in lines where !line.contains("grep") {
@@ -253,3 +281,4 @@ func findServerPid(on server: Server) throws -> String? {
 }
 
 """
+}
