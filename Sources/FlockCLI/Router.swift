@@ -10,25 +10,29 @@ import SwiftCLI
 
 class Router: SwiftCLI.Router {
     
-    func route(cli: CLI, arguments: ArgumentList) -> RouteResult {
-        let path = CommandGroupPath(cli: cli)
+    func parse(commandGroup: CommandGroup, arguments: ArgumentList) throws -> (CommandPath, OptionRegistry) {
+        let path = CommandGroupPath(top: commandGroup)
+        let optionRegistry = OptionRegistry(routable: commandGroup)
         
         // Just ran `flock`
-        guard let name = arguments.head else {
-            return .failure(partialPath: path, notFound: nil)
+        guard arguments.hasNext() else {
+            throw RouteError(partialPath: path, notFound: nil)
         }
+        
+        let name = arguments.pop()
         
         // Ran something like `flock init`
-        if let command = cli.children.first(where: { $0.name == name.value }) as? Command {
-            arguments.remove(node: name)
-            return .success(path.appending(command))
+        if let command = commandGroup.children.first(where: { $0.name == name }) as? Command {
+            optionRegistry.register(command)
+            return (path.appending(command), optionRegistry)
         }
         
-        if let tasks = try? Beak.findTasks(), tasks.contains(where: { $0.name == name.value }) {
-            return .success(path.appending(ForwardCommand()))
+        // Ran a task
+        if let tasks = try? Beak.findTasks(), tasks.contains(where: { $0.name == name }) {
+            return (path.appending(ForwardCommand()), optionRegistry)
         }
         
-        return .failure(partialPath: path, notFound: name.value)
+        throw RouteError(partialPath: path, notFound: name)
     }
     
 }

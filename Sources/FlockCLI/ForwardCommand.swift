@@ -6,6 +6,7 @@
 //
 //
 
+import PathKit
 import SwiftCLI
 
 class ForwardCommand: FlockCommand {
@@ -13,14 +14,12 @@ class ForwardCommand: FlockCommand {
     let name = ""
     let shortDescription = ""
     
-    let args = CollectedParameter()
+    let task = Parameter()
+    let args = OptionalCollectedParameter()
     
     func execute() throws {
         try guardFlockIsInitialized()
-        
-        do {
-            try Beak.execute(args: ["run", "--path", "Flock.swift"] + args.value)
-        } catch {}
+        try Beak.run(task: task.value, args: args.value)
     }
     
 }

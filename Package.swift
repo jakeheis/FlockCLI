@@ -9,9 +9,9 @@ let package = Package(
         .executable(name: "flock", targets: ["FlockCLI"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/jakeheis/Beak", from: "0.3.3"),
+        .package(url: "https://github.com/yonaskolb/Beak", from: "0.4.0"),
         .package(url: "https://github.com/onevcat/Rainbow", from: "3.0.0"),
-        .package(url: "https://github.com/jakeheis/SwiftCLI", from: "4.1.0"),
+        .package(url: "https://github.com/jakeheis/SwiftCLI", from: "5.1.1"),
     ],
     targets: [
         .target(name: "FlockCLI", dependencies: ["BeakCore", "Rainbow", "SwiftCLI"]),

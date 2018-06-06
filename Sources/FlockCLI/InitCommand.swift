@@ -10,7 +10,6 @@ import Foundation
 import PathKit
 import Rainbow
 import SwiftCLI
-import SwiftShell
 
 class InitCommand: FlockCommand {
   
@@ -32,7 +31,7 @@ class InitCommand: FlockCommand {
         stdout <<< ""
         stdout <<< "2. Building dependencies (this may take a minute)"
         
-        try Beak.execute(args: ["run", "--path", Beak.flockPath.string])
+        try Beak.run()
         
         stdout <<< ""
         stdout <<< "Success!".green.bold + " Flock has been initialized"
@@ -48,13 +47,13 @@ class InitCommand: FlockCommand {
         let defaultName = Path(".").absolute().lastComponent
         let inputName = Input.readLine(prompt: "Project name: (\(defaultName))")
         
-        let defaultUrl = run("git", "remote", "get-url", "origin").stdout
-        let prompt = "Repository url: " + (defaultUrl.isEmpty ? "" : "(\(defaultUrl)) ")
+        let defaultUrl = try? capture("git", "remote", "get-url", "origin").stdout
+        let prompt = "Repository url: " + (defaultUrl.flatMap(({ "(\($0)) " })) ?? "")
         let inputUrl = Input.readLine(prompt: prompt)
         
         return generateFlockfile(
             name: inputName.isEmpty ? defaultName : inputName,
-            url: inputUrl.isEmpty ? defaultUrl : inputUrl
+            url: inputUrl.isEmpty ? (defaultUrl ?? "") : inputUrl
         )
     }
     

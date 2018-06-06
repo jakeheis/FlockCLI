@@ -14,13 +14,36 @@ struct Beak {
     static let flockPath = Path("Flock.swift")
     private static let cachePath = Path("/tmp/flock/builds")
     
-    static func execute(args: [String]) throws {
-        let options = BeakOptions(cachePath: cachePath)
-        let beak = BeakCore.Beak(options: options)
+    static func run(task: String? = nil, args: [String] = []) throws {
+        let flockfile = try BeakFile(path: flockPath)
+        
+        var functionCall: String?
+        if let task = task {
+            guard let function = flockfile.functions.first(where: { $0.name == task }) else {
+                throw BeakError.invalidFunction(task)
+            }
+            functionCall = try FunctionParser.getFunctionCall(function: function, arguments: args)
+        }
+        
+        // create package
+        let directory = Beak.flockPath.absolute().parent()
+        let packagePath = Beak.cachePath + directory.string.replacingOccurrences(of: "/", with: "_")
+        let packageManager = PackageManager(path: packagePath, name: "Flockfile", beakFile: flockfile)
+        try packageManager.write(functionCall: functionCall)
+        
         do {
-            try beak.execute(arguments: args)
-        } catch let error {
-            throw FlockError(message: String(describing: error) + " (Beak failure)")
+            _ = try capture("swift", arguments: ["build", "--disable-sandbox"], directory: packagePath.string)
+        } catch let error as CaptureError {
+            WriteStream.stderr <<< error.captured.rawStdout
+            WriteStream.stderr <<< error.captured.rawStderr
+            throw error
+        }
+        
+        let executable = "\(packagePath.string)/.build/debug/Flockfile"
+        if task != nil {
+            try Task.execvp(executable, arguments: [])
+        } else {
+            try SwiftCLI.run(executable)
         }
     }
     

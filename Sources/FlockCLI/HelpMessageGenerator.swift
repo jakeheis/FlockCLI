@@ -9,12 +9,13 @@ import SwiftCLI
 
 class HelpMessageGenerator: SwiftCLI.HelpMessageGenerator {
     
-    func generateCommandList(for path: CommandGroupPath) -> String {
-        var str = DefaultHelpMessageGenerator().generateCommandList(for: path)
+    func writeCommandList(for path: CommandGroupPath, to out: WritableStream) {
+        DefaultHelpMessageGenerator().writeCommandList(for: path, to: out)
         if let tasks = try? Beak.generateTaskList() {
-            str += "\nTasks:\n\(tasks)\n"
+            out <<< ""
+            out <<< "Tasks:"
+            out <<< tasks
         }
-        return str
     }
     
 }
