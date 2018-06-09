@@ -29,7 +29,7 @@ class Router: SwiftCLI.Router {
         
         // Ran a task
         if let tasks = try? Beak.findTasks(), tasks.contains(where: { $0.name == name }) {
-            return (path.appending(ForwardCommand()), optionRegistry)
+            return (path.appending(ForwardCommand(name: name)), optionRegistry)
         }
         
         throw RouteError(partialPath: path, notFound: name)

@@ -1,6 +1,6 @@
 import SwiftCLI
 
-let flock = CLI(name: "flock", version: "0.0.1")
+let flock = CLI(name: "flock", version: "0.4.0")
 
 flock.parser = Parser(router: Router())
 flock.helpMessageGenerator = HelpMessageGenerator()

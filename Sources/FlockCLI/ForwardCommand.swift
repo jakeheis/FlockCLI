@@ -11,15 +11,18 @@ import SwiftCLI
 
 class ForwardCommand: FlockCommand {
     
-    let name = ""
+    let name: String
     let shortDescription = ""
     
-    let task = Parameter()
     let args = OptionalCollectedParameter()
+    
+    init(name: String) {
+        self.name = name
+    }
     
     func execute() throws {
         try guardFlockIsInitialized()
-        try Beak.run(task: task.value, args: args.value)
+        try Beak.run(task: name, args: args.value)
     }
     
 }
