@@ -36,9 +36,9 @@ class InitCommand: FlockCommand {
         stdout <<< ""
         stdout <<< "Success!".green.bold + " Flock has been initialized"
         stdout <<< ""
-        stdout <<< "Next steps:"
-        stdout <<< " 1. Open Flock.swift and finish filling out the configuration"
-        stdout <<< " 2. If you want Flock to automatically restart your app, fill out startServer(on server: Server ...) and related functions"
+        stdout <<< "Next steps:".bold
+        stdout <<< " 1. Open Flock.swift and finish filling out the environment info"
+        stdout <<< " 2. Read through the rest of the Flock.swift file and follow the directions throughout that file"
         stdout <<< " 3. Run `flock deploy`"
         stdout <<< ""
     }
@@ -110,13 +110,13 @@ public func deploy(env: Environment = production) {
         try server.execute("git clone --depth 1 \\(env.project.repoURL) \\(cloneDirectory)")
         
         // Uncomment if using swiftenv:
-        // try swiftenv(on: server, env: env)
+        // try swiftenv(on: server, env: env, directory: cloneDirectory)
         
         try server.execute("swift build -C \\(cloneDirectory) -c release")
         
         try server.execute("ln -sfn \\(cloneDirectory) \\(env.currentDirectory)")
     
-        // Uncomment after filling out the restartServer function
+        // Uncomment after completing the restartServer function below
         // try restartServer(on: server, env: env)
     }
 }
@@ -149,25 +149,7 @@ public func restartServer(env: Environment = production) {
     }
 }
 
-// MARK: - Helpers
-
-func swiftenv(on server: Server, env: Environment) throws {
-    guard server.commandExists("swiftenv") else {
-        throw TaskError(message: "swiftenv not found; ensure it is installed and executable")
-    }
-    
-    guard let fileVersion = try? String(contentsOfFile: ".swift-version", encoding: .utf8) else {
-        throw TaskError(message: "You must specify which Swift version to use in a `.swift-version` file.")
-    }
-    
-    let swiftVersion = fileVersion.trimmingCharacters(in: .whitespacesAndNewlines)
-    
-    let existingSwifts = try server.capture("swiftenv versions")
-    if !existingSwifts.contains(swiftVersion) {
-        try server.execute("swiftenv install \\(swiftVersion)")
-        try server.execute("swiftenv rehash")
-    }
-}
+// MARK: -
 
 func startServer(on server: Server, env: Environment) throws {
     //
@@ -259,7 +241,23 @@ func restartServer(on server: Server, env: Environment) throws {
      */
 }
 
-// MARK: - Internal helpers
+func swiftenv(on server: Server, env: Environment, directory: String) throws {
+    guard server.commandExists("swiftenv") else {
+        throw TaskError(message: "swiftenv not found; ensure it is installed and executable")
+    }
+    
+    guard let fileVersion = try? server.capture("cat \\(directory)/.swift-version") else {
+        throw TaskError(message: "You must specify which Swift version to use in a `.swift-version` file.")
+    }
+
+    let swiftVersion = fileVersion.trimmingCharacters(in: .whitespacesAndNewlines)
+
+    let existingSwifts = try server.capture("swiftenv versions")
+    if !existingSwifts.contains(swiftVersion) {
+        try server.execute("swiftenv install \\(swiftVersion)")
+        try server.execute("swiftenv rehash")
+    }
+}
 
 func executeSupervisor(command: String, server: Server, env: Environment) throws {
     try server.execute("supervisorctl \\(command) \\(env.project.name):*")

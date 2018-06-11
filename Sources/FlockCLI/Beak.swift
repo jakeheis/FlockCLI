@@ -12,7 +12,7 @@ import SwiftCLI
 struct Beak {
     
     static let flockPath = Path("Flock.swift")
-    private static let cachePath = Path("/tmp/flock/builds")
+    private static let cachePath = Path("~/.beak/flock/builds").normalize()
     
     static func run(task: String? = nil, args: [String] = []) throws {
         let flockfile = try BeakFile(path: flockPath)
@@ -26,9 +26,10 @@ struct Beak {
         }
         
         // create package
-        let directory = Beak.flockPath.absolute().parent()
-        let packagePath = Beak.cachePath + directory.string.replacingOccurrences(of: "/", with: "_")
-        let packageManager = PackageManager(path: packagePath, name: "Flockfile", beakFile: flockfile)
+        let directory = flockPath.absolute().parent()
+        let packagePath = cachePath + directory.string.replacingOccurrences(of: "/", with: "_")
+        let productName = "Flockfile"
+        let packageManager = PackageManager(path: packagePath, name: productName, beakFile: flockfile)
         try packageManager.write(functionCall: functionCall)
         
         do {
@@ -39,7 +40,7 @@ struct Beak {
             throw error
         }
         
-        let executable = "\(packagePath.string)/.build/debug/Flockfile"
+        let executable = "\(packagePath.string)/.build/debug/\(productName)"
         if task != nil {
             try Task.execvp(executable, arguments: [])
         } else {
