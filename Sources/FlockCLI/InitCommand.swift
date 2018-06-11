@@ -149,6 +149,17 @@ public func restartServer(env: Environment = production) {
     }
 }
 
+//
+// You can add your own tasks here
+//
+/*
+public func myTask(env: Environment = production) {
+    Flock.run(in: env) { (server) in
+        // Do anything!
+    }
+}
+*/
+
 // MARK: -
 
 func startServer(on server: Server, env: Environment) throws {
