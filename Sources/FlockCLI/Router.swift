@@ -19,7 +19,10 @@ class Router: SwiftCLI.Router {
             throw RouteError(partialPath: path, notFound: nil)
         }
         
-        let name = arguments.pop()
+        var name = arguments.pop()
+        if let alias = commandGroup.aliases[name] {
+            name = alias
+        }
         
         // Ran something like `flock init`
         if let command = commandGroup.children.first(where: { $0.name == name }) as? Command {
